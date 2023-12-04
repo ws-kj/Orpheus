@@ -1,0 +1,13 @@
+action my_func (a: int)
+->
+    if a > 5
+    ->
+        print 6
+
+    print "Hello World"
+    <<
+        Write a haiku
+    >> 
+    return 5.4
+             
+my_func()

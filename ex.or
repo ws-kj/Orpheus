@@ -1,0 +1,44 @@
+// determined by model config file (global or project specific)
+model "llama2"
+
+// tools are functions that model can call on to accomplish task
+tool add(a, b) 
+["Compute the sum of A and B"]
+->
+    ret a + b
+
+tool os_name() 
+["Get the name of the operating system"]
+->
+    let name = pyeval 
+    ->
+        import os
+        os.name
+
+    ret name
+
+// actions are functions that interact with model
+action desc_os() 
+->
+    var digit_sum =
+    <<
+        Find the name of the operating system.
+        If the operating system name contains a version number,
+        output the sum of the digits. Otherwise output 0.
+    >>
+
+    // takes expr
+    print digit_sum
+
+    // no scoped vars accessed, so evaluates to string
+    ret << Describe the features of the operating system. >>
+
+spawn myagent //agent with thread (message history)
+
+myagent::desc_os() // run action on agent thread
+
+// invoke arbitrary task on agent
+myagent::<< Summarize those features in a bulleted list. >>
+
+// invocation without bound agent
+print << Write a haiku about the end of a computer program. >>
