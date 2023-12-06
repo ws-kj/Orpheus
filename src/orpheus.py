@@ -5,6 +5,7 @@ from tokens import Token
 from scanner import Scanner
 from parser import Parser
 from error_handler import ErrorHandler
+from eval import eval
 
 class Orpheus(object):
     had_error = False
@@ -41,9 +42,13 @@ class Orpheus(object):
             parser.tokens += tokens
 
         program = parser.parse_program()
+
         for s in program.statements:
             print(s)
             print()
+
+        print("Eval:")
+        print(eval(program).value)
 
 if __name__ == "__main__":
     interpreter = Orpheus()
