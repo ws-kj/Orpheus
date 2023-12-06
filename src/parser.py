@@ -178,30 +178,32 @@ class Parser(object):
 
         return exp
 
-    def parse_if_expression(self):
-        expression = tree.IfExpression(self.current_token, None, None, None)
-
-        self.advance()
-        expression.condition = self.parse_expression(PrecLevel.LOWEST)
-
+    def parse_arrow_statement(self):
         if(self.peek_token.type == TokenType.ARROW):
             self.advance()
             if(self.peek_token.type == TokenType.NEWLINE):
-                expression.consequence = self.parse_block_statement()
+                return self.parse_block_statement()
             else:
                 self.advance()
-                expression.consequence = self.parse_expression_statement()
+                return self.parse_expression_statement()
         else:
             if(not self.expect_peek(TokenType.NEWLINE)):
                 return None
             if(not self.expect_peek(TokenType.ARROW)):
                 return None
-            print(self.peek_token)
+
             if(self.peek_token.type == TokenType.NEWLINE):
-                expression.consequence = self.parse_block_statement()
+                return self.parse_block_statement()
             else:
                 self.advance()
-                expression.consequence = self.parse_expression_statement()
+                return self.parse_expression_statement()
+
+    def parse_if_expression(self):
+        expression = tree.IfExpression(self.current_token, None, None, None)
+
+        self.advance()
+        expression.condition = self.parse_expression(PrecLevel.LOWEST)
+        expression.consequence = self.parse_arrow_statement()
 
         return expression
 
