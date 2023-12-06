@@ -25,7 +25,8 @@ class Parser(object):
         TokenType.PLUS: PrecLevel.SUM,
         TokenType.MINUS: PrecLevel.SUM,
         TokenType.SLASH: PrecLevel.PRODUCT,
-        TokenType.STAR: PrecLevel.PRODUCT
+        TokenType.STAR: PrecLevel.PRODUCT,
+        TokenType.LPAREN: PrecLevel.CALL
     }
 
     def __init__(self, tokens=None):
@@ -56,6 +57,8 @@ class Parser(object):
         self.register_prefix(TokenType.IF, self.parse_if_expression)
 
         self.register_prefix(TokenType.FN, self.parse_function_literal)
+
+        self.register_infix(TokenType.LPAREN, self.parse_call_expression)
 
         self.register_infix(TokenType.EQUAL_EQUAL, self.parse_infix_expression)
         self.register_infix(TokenType.BANG_EQUAL, self.parse_infix_expression)
@@ -238,6 +241,32 @@ class Parser(object):
         if(not self.expect_peek(TokenType.RPAREN)): return None
 
         return idents
+
+    def parse_call_expression(self, function):
+        exp = tree.CallExpression(self.current_token, function, None)
+        exp.args = self.parse_call_arguments()
+        return exp
+
+    def parse_call_arguments(self):
+        args = []
+
+        if(self.peek_token_is(TokenType.RPAREN)):
+            self.advance()
+            return args
+
+        self.advance()
+        args.append(self.parse_expression(PrecLevel.LOWEST))
+
+        while(self.peek_token_is(TokenType.COMMA)):
+            self.advance()
+            self.advance()
+            args.append(self.parse_expression(PrecLevel.LOWEST))
+
+        if(not self.expect_peek(TokenType.RPAREN)):
+            return None
+
+        return args
+
 
     def parse_block_statement(self):
         block = tree.BlockStatement(self.current_token, [])

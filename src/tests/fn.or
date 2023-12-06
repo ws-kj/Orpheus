@@ -3,3 +3,5 @@ fn add(a, b)
 -> 
     a + b
     a + 2 * b
+
+add(5, 2)

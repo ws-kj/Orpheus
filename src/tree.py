@@ -105,6 +105,17 @@ class FunctionLiteral(Expression):
     def token_literal(self):
         return self.token.literal
 
+@dataclass
+class CallExpression(Expression):
+    token: Token
+    function: Identifier
+    args: list[Expression]
+
+    def expression_node(self):
+        pass
+    def token_literal(self):
+        return self.token.literal
+
 @dataclass 
 class IfExpression(Expression):
     token: Token
