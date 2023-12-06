@@ -120,8 +120,6 @@ class Parser(object):
                 return self.parse_var_statement()
             case TokenType.RET:
                 return self.parse_return_statement()
-            case TokenType.MODEL:
-                return self.parse_model_statement()
             case TokenType.NEWLINE | TokenType.INDENT | TokenType.DEDENT:
                 return None
             case _:
@@ -309,45 +307,21 @@ class Parser(object):
 
         statement.name = tree.Identifier(self.current_token, self.current_token.literal)
 
-        while(not self.is_current_end()):
-            self.advance()
+        if(not self.expect_peek(TokenType.EQUAL)): return None
+
+        self.advance()
+        statement.value = self.parse_expression(PrecLevel.LOWEST)
+
+        if(self.is_peek_end()): self.advance()
 
         return statement
 
     #TODO implement
     def parse_return_statement(self):
         statement = tree.ReturnStatement(self.current_token, None)
-
-        while(not self.is_current_end()):
-            self.advance()
-
-        return statement
-
-    #TODO implement
-    def parse_model_statement(self):
-        statement = tree.ModelStatement(self.current_token, None)
-
-        if(not self.expect_peek(TokenType.IDENTIFIER)):
-            return None
-
-        statement.name = tree.Identifier(self.current_token, self.current_token.literal)
-
-        while(not self.is_current_end()):
-            self.advance()
-
-        return statement
-
-    #TODO implement
-    def parse_spawn_statement(self):
-        statement = tree.SpawnStatement(self.current_token, None)
-
-        if(not self.expect_peek(TokenType.IDENTIFIER)):
-            return None
-
-        statement.name = tree.Identifier(self.current_token, self.current_token.literal)
-
-        while(not self.is_current_end()):
-            self.advance()
+        self.advance()
+        statement.return_value = self.parse_expression(PrecLevel.LOWEST)
+        if(self.is_peek_end()): self.advance()
 
         return statement
 

@@ -2,23 +2,37 @@
 model "llama2"
 
 // tools are functions that model can call on to accomplish task
-tool add(a, b) 
+tool fn add(a, b) : num
 ["Compute the sum of A and B"]
 ->
     ret a + b
 
-tool os_name() 
+tool fn os_name() : str
 ["Get the name of the operating system"]
 ->
-    let name = pyeval 
+    var name = pyeval 
     ->
         import os
         os.name
 
     ret name
 
+fn factorial(n: num) : num 
+-> 
+    if n == 1 -> ret n
+    ret n * factorial(n-1)
+
+fn fizzbuzz(n: num)
+->
+    var i: num = 0
+    while i <= n
+    ->
+        if n % 3 == 0 -> print "Fizz"
+        if n % 5 == 0 -> print "Buzz"
+        
+
 // actions are functions that interact with model
-action desc_os() 
+action fn desc_os() : str
 ->
     var digit_sum =
     <<
@@ -35,7 +49,7 @@ action desc_os()
 
 spawn myagent //agent with thread (message history)
 
-myagent::desc_os() // run action on agent thread
+myagent::desc_os() // run fn on agent thread
 
 // invoke arbitrary task on agent
 myagent::<< Summarize those features in a bulleted list. >>
