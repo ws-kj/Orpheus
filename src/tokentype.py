@@ -51,9 +51,10 @@ class TokenType(Enum):
     TOOL = auto()
     ACTION = auto()
     SPAWN = auto()
-
+    FN = auto() 
     T_NUM = auto()
     T_STR = auto()
+    T_NIL = auto()
 
     # keywords
     AND = auto()
@@ -66,5 +67,7 @@ class TokenType(Enum):
     FOR = auto()
     WHILE = auto()
     VAR = auto()
-    RETURN = auto()
+    RET = auto()
     PASS = auto()
+    BREAK = auto()
+    LOOP = auto()

@@ -83,7 +83,6 @@ class Boolean(Expression):
     def token_literal(self):
         return self.token.literal
 
-
 @dataclass 
 class BlockStatement(Statement):
     token: Token
@@ -95,6 +94,16 @@ class BlockStatement(Statement):
     def token_literal(self):
         return self.token.literal
 
+@dataclass 
+class FunctionLiteral(Expression):
+    token: Token
+    params: list[Identifier]
+    body: BlockStatement
+    
+    def expression_node(self):
+        pass
+    def token_literal(self):
+        return self.token.literal
 
 @dataclass 
 class IfExpression(Expression):

@@ -55,6 +55,8 @@ class Parser(object):
         self.register_prefix(TokenType.ARROW, self.parse_block_statement)
         self.register_prefix(TokenType.IF, self.parse_if_expression)
 
+        self.register_prefix(TokenType.FN, self.parse_function_literal)
+
         self.register_infix(TokenType.EQUAL_EQUAL, self.parse_infix_expression)
         self.register_infix(TokenType.BANG_EQUAL, self.parse_infix_expression)
         self.register_infix(TokenType.LESS, self.parse_infix_expression)
@@ -113,7 +115,7 @@ class Parser(object):
         match self.current_token.type:
             case TokenType.VAR:
                 return self.parse_var_statement()
-            case TokenType.RETURN:
+            case TokenType.RET:
                 return self.parse_return_statement()
             case TokenType.MODEL:
                 return self.parse_model_statement()
@@ -178,34 +180,64 @@ class Parser(object):
 
         return exp
 
-    def parse_arrow_statement(self):
-        if(self.peek_token.type == TokenType.ARROW):
+    def parse_arrow_block(self):
+        if(self.peek_token_is(TokenType.ARROW)):
             self.advance()
-            if(self.peek_token.type == TokenType.NEWLINE):
+            if(self.peek_token_is(TokenType.NEWLINE)):
                 return self.parse_block_statement()
             else:
+                tok = self.current_token
                 self.advance()
-                return self.parse_expression_statement()
+                statement = self.parse_expression_statement()
+                return tree.BlockStatement(tok, [statement])
         else:
-            if(not self.expect_peek(TokenType.NEWLINE)):
-                return None
-            if(not self.expect_peek(TokenType.ARROW)):
-                return None
+            if(not self.expect_peek(TokenType.NEWLINE)): return None
+            if(not self.expect_peek(TokenType.ARROW)): return None
 
-            if(self.peek_token.type == TokenType.NEWLINE):
+            if(self.peek_token_is(TokenType.NEWLINE)):
                 return self.parse_block_statement()
             else:
+                tok = self.current_token
                 self.advance()
-                return self.parse_expression_statement()
+                statement = self.parse_expression_statement()
+                return tree.BlockStatement(tok, [statement])
 
     def parse_if_expression(self):
         expression = tree.IfExpression(self.current_token, None, None, None)
 
         self.advance()
         expression.condition = self.parse_expression(PrecLevel.LOWEST)
-        expression.consequence = self.parse_arrow_statement()
+        expression.consequence = self.parse_arrow_block()
 
         return expression
+
+    def parse_function_literal(self):
+        self.advance()
+        literal = tree.FunctionLiteral(self.current_token, None, None)
+
+        if(not self.expect_peek(TokenType.LPAREN)): return None
+        literal.parameters = self.parse_function_parameters()
+        literal.body = self.parse_arrow_block()
+
+        return literal
+
+    def parse_function_parameters(self):
+        idents = []
+        if(self.peek_token_is(TokenType.RPAREN)):
+            self.advance()
+            return idents
+        self.advance()
+        ident = tree.Identifier(self.current_token, self.current_token.literal)
+        idents.append(ident)
+        while(self.peek_token_is(TokenType.COMMA)):
+            self.advance()
+            self.advance()
+            ident = tree.Identifier(self.current_token, self.current_token.literal)
+            idents.append(ident)
+
+        if(not self.expect_peek(TokenType.RPAREN)): return None
+
+        return idents
 
     def parse_block_statement(self):
         block = tree.BlockStatement(self.current_token, [])

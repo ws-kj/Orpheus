@@ -15,8 +15,10 @@ class Scanner(object):
         "for": TokenType.FOR,
         "while": TokenType.WHILE,
         "var": TokenType.VAR,
-        "return": TokenType.RETURN,
+        "ret": TokenType.RET,
         "pass": TokenType.PASS,
+        "break": TokenType.BREAK,
+        "loop": TokenType.LOOP,
 
         #orpheus
         "model": TokenType.MODEL,
@@ -24,7 +26,9 @@ class Scanner(object):
         "action": TokenType.ACTION,
         "spawn": TokenType.SPAWN,
         "num": TokenType.T_NUM,
-        "str": TokenType.T_STR
+        "str": TokenType.T_STR,
+        "nil": TokenType.T_NIL,
+        "fn": TokenType.FN
     }
 
     def __init__(self, source: str):

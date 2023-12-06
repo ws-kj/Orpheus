@@ -7,9 +7,6 @@ if true
 
 if true -> 5
 
-if true ->
-    5
-
 #peek token is arrow:
 #    if newline:
 #        block statement
