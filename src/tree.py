@@ -85,6 +85,30 @@ class Boolean(Expression):
 
 
 @dataclass 
+class BlockStatement(Statement):
+    token: Token
+    statements: list[Statement]
+
+    def statement_node(self):
+        pass
+
+    def token_literal(self):
+        return self.token.literal
+
+
+@dataclass 
+class IfExpression(Expression):
+    token: Token
+    condition: Expression
+    consequence: BlockStatement
+    alternative: BlockStatement
+    
+    def expression_node(self):
+        pass
+    def token_literal(self):
+        return self.token.literal
+
+@dataclass 
 class ExpressionStatement(Statement):
     token: Token
     expression: Expression
@@ -94,7 +118,6 @@ class ExpressionStatement(Statement):
 
     def token_literal(self):
         return self.token.literal
-
 
 @dataclass
 class VarStatement(Statement):

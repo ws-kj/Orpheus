@@ -1,0 +1,26 @@
+if true
+->
+    5
+
+if true
+-> 5
+
+if true -> 5
+
+if true ->
+    5
+
+#peek token is arrow:
+#    if newline:
+#        block statement
+#    else:
+#        expression
+#else:
+#    expect newline:
+#        expect arrow:
+#            if newline:
+#                block statement
+#            else:
+#                expression
+
+

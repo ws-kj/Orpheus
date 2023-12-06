@@ -52,6 +52,8 @@ class Parser(object):
         self.register_prefix(TokenType.FALSE, self.parse_boolean)
 
         self.register_prefix(TokenType.LPAREN, self.parse_grouped_expression)
+        self.register_prefix(TokenType.ARROW, self.parse_block_statement)
+        self.register_prefix(TokenType.IF, self.parse_if_expression)
 
         self.register_infix(TokenType.EQUAL_EQUAL, self.parse_infix_expression)
         self.register_infix(TokenType.BANG_EQUAL, self.parse_infix_expression)
@@ -175,6 +177,46 @@ class Parser(object):
             return None
 
         return exp
+
+    def parse_if_expression(self):
+        expression = tree.IfExpression(self.current_token, None, None, None)
+
+        self.advance()
+        expression.condition = self.parse_expression(PrecLevel.LOWEST)
+
+        if(self.peek_token.type == TokenType.ARROW):
+            self.advance()
+            if(self.peek_token.type == TokenType.NEWLINE):
+                expression.consequence = self.parse_block_statement()
+            else:
+                self.advance()
+                expression.consequence = self.parse_expression_statement()
+        else:
+            if(not self.expect_peek(TokenType.NEWLINE)):
+                return None
+            if(not self.expect_peek(TokenType.ARROW)):
+                return None
+            print(self.peek_token)
+            if(self.peek_token.type == TokenType.NEWLINE):
+                expression.consequence = self.parse_block_statement()
+            else:
+                self.advance()
+                expression.consequence = self.parse_expression_statement()
+
+        return expression
+
+    def parse_block_statement(self):
+        block = tree.BlockStatement(self.current_token, [])
+
+        self.advance()
+
+        while(not self.current_token_is(TokenType.DEDENT) and not self.current_token_is(TokenType.EOF)):
+            statement = self.parse_statement()
+            if(statement is not None):
+                block.statements.append(statement)
+
+            self.advance()
+        return block
 
     def parse_prefix_expression(self):
         expression = tree.PrefixExpression(
