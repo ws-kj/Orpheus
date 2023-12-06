@@ -22,7 +22,7 @@ def eval(node: tree.Node):
         case tree.NumLiteral:
             return obj.Number(node.value)
         case tree.Boolean:
-            return native_bool(node.value)
+            return bool_obj(node.value)
         case _:
             return None
 
@@ -36,7 +36,7 @@ def eval_statements(statements):
 def eval_prefix_expression(node, right):
     match node.token.type:
         case TokenType.NOT:
-            return native_bool(eval_not_expression(right))
+            return bool_obj(eval_not_expression(right))
         case TokenType.MINUS:
             return eval_minus_prefix_expression(right)
         case _:
@@ -55,6 +55,18 @@ def eval_infix_expression(node, left, right):
             return obj.Number(left_val * right_val)
         case TokenType.SLASH:
             return obj.Number(left_val / right_val)
+        case TokenType.LESS:
+            return bool_obj(left_val < right_val)
+        case TokenType.GREATER:
+            return bool_obj(left_val > right_val)
+        case TokenType.LESS_EQUAL:
+            return bool_obj(left_val <= right_val)
+        case TokenType.GREATER_EQUAL:
+            return bool_obj(left_val >= right_val)
+        case TokenType.EQUAL_EQUAL:
+            return bool_obj(left_val == right_val)
+        case TokenType.BANG_EQUAL:
+            return bool_obj(left_val != right_val)
         case _:
             return None
 
@@ -68,6 +80,6 @@ def eval_minus_prefix_expression(right):
 
 
 
-def native_bool(value):
+def bool_obj(value):
     if(value): return TRUE
     return FALSE
