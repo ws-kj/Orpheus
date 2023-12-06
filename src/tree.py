@@ -66,7 +66,7 @@ class Identifier(Expression):
 @dataclass 
 class NumLiteral(Expression):
     token: Token
-    value: int
+    value: float
 
     def expression_node(self):
         pass

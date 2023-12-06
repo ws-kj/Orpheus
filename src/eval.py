@@ -15,6 +15,10 @@ def eval(node: tree.Node):
         case tree.PrefixExpression:
             right = eval(node.right)
             return eval_prefix_expression(node, right)
+        case tree.InfixExpression:
+            left = eval(node.left)
+            right = eval(node.right)
+            return eval_infix_expression(node, left, right)
         case tree.NumLiteral:
             return obj.Number(node.value)
         case tree.Boolean:
@@ -38,15 +42,31 @@ def eval_prefix_expression(node, right):
         case _:
             return None
 
+def eval_infix_expression(node, left, right):
+    left_val = left.value
+    right_val = right.value
+
+    match node.token.type:
+        case TokenType.PLUS:
+            return obj.Number(left_val + right_val)
+        case TokenType.MINUS:
+            return obj.Number(left_val - right_val)
+        case TokenType.STAR:
+            return obj.Number(left_val * right_val)
+        case TokenType.SLASH:
+            return obj.Number(left_val / right_val)
+        case _:
+            return None
+
 def eval_not_expression(right):
     return not right.value # will eventually rewrite in C
 
 def eval_minus_prefix_expression(right):
-    print(right)
     if(right.type() != obj.ObjectType.NUMBER):
         return None
-    value = right.value
-    return obj.Number(-value)
+    return obj.Number(-right.value)
+
+
 
 def native_bool(value):
     if(value): return TRUE

@@ -18,7 +18,7 @@ class Object(ABC):
 
 @dataclass
 class Number(Object):
-    value: int
+    value: float
 
     def inspect(self):
         return str(self.value)

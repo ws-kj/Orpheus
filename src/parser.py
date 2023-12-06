@@ -160,7 +160,7 @@ class Parser(object):
         literal = tree.NumLiteral(self.current_token, None)
         
         try:
-            value = int(self.current_token.literal)
+            value = float(self.current_token.literal)
             literal.value = value
             return literal
         except ValueError:
