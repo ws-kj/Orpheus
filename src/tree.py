@@ -140,7 +140,7 @@ class ExpressionStatement(Statement):
         return self.token.literal
 
 @dataclass
-class VarStatement(Statement):
+class LetStatement(Statement):
     token: Token
     name:  Identifier
     value: Expression

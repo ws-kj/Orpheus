@@ -1,6 +1,9 @@
-fn five() -> 
-    ret 5 
+let adder = fn(a, b)
+->
+    ret a + b
 
-fn five() -> ret 5
+#TODO fix advance fail if last token is inside ret statement?
 
-if true -> 5 + 2
+let a = fn() -> 
+    ret 5
+

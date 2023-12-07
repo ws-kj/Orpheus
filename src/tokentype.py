@@ -67,7 +67,7 @@ class TokenType(Enum):
     ELSE = auto()
     FOR = auto()
     WHILE = auto()
-    VAR = auto()
+    LET = auto()
     RET = auto()
     PASS = auto()
     BREAK = auto()

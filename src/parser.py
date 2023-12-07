@@ -110,15 +110,16 @@ class Parser(object):
             statement = self.parse_statement()
             if(statement != None):
                 program.statements.append(statement)
-
+            if(self.current_token.type == TokenType.EOF):
+                break
             self.advance()
 
         return program
 
     def parse_statement(self):
         match self.current_token.type:
-            case TokenType.VAR:
-                return self.parse_var_statement()
+            case TokenType.LET:
+                return self.parse_let_statement()
             case TokenType.RET:
                 return self.parse_return_statement()
             case TokenType.NEWLINE | TokenType.INDENT | TokenType.DEDENT:
@@ -213,7 +214,6 @@ class Parser(object):
         return expression
 
     def parse_function_literal(self):
-        self.advance()
         literal = tree.FunctionLiteral(self.current_token, None, None)
 
         if(not self.expect_peek(TokenType.LPAREN)): return None
@@ -297,8 +297,8 @@ class Parser(object):
         return expression
 
     #TODO implement
-    def parse_var_statement(self):
-        statement = tree.VarStatement(self.current_token, None, None)
+    def parse_let_statement(self):
+        statement = tree.LetStatement(self.current_token, None, None)
 
         if(not self.expect_peek(TokenType.IDENTIFIER)):
             return None

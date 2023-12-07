@@ -14,7 +14,7 @@ class Scanner(object):
         "else": TokenType.ELSE,
         "for": TokenType.FOR,
         "while": TokenType.WHILE,
-        "var": TokenType.VAR,
+        "let": TokenType.LET,
         "ret": TokenType.RET,
         "pass": TokenType.PASS,
         "break": TokenType.BREAK,
