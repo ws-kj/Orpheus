@@ -15,15 +15,19 @@ def eval(node: tree.Node):
             return eval(node.expression)
         case tree.PrefixExpression:
             right = eval(node.right)
+            if(is_error(right)): return right
             return eval_prefix_expression(node, right)
         case tree.InfixExpression:
             left = eval(node.left)
             right = eval(node.right)
+            if(is_error(left)): return left
+            if(is_error(right)): return right
             return eval_infix_expression(node, left, right)
         case tree.BlockStatement:
             return eval_block_statement(node.statements)
         case tree.ReturnStatement:
             val = eval(node.return_value)
+            if(is_error(val)): return val
             return obj.ReturnValue(val)
         case tree.IfExpression:
             return eval_if_expression(node)
@@ -116,6 +120,7 @@ def eval_minus_prefix_expression(right):
 
 def eval_if_expression(node):
     cond = eval(node.condition)
+    if(is_error(cond)): return cond
     if(is_truthy(cond)):
         return eval(node.consequence)
     elif(node.alternative != None):
@@ -127,6 +132,11 @@ def is_truthy(obj):
     if(obj == NIL or obj == FALSE):
         return False
     return True
+
+def is_error(o):
+    if o != None:
+        return o.type() == obj.ObjectType.ERROR
+    return False
 
 def bool_obj(value):
     if(value): return TRUE
