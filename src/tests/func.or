@@ -7,3 +7,7 @@ let adder = fn(a, b)
 let a = fn() -> 
     ret 5
 
+let a = 3 * 5
+
+if a > 14
+-> a / 2

@@ -8,9 +8,9 @@ class ObjectType(Enum):
     NIL = auto()
     RETURN_VALUE = auto()
     ERROR = auto()
+    FUNCTION = auto()
 
 class Object(ABC):
-    value: object
     @abstractmethod 
     def type(self):
         pass
@@ -60,3 +60,14 @@ class Error(Object):
         return "ERROR: " + self.message
     def type(self):
         return ObjectType.ERROR
+
+#@dataclass 
+#class Function(Object):
+#    params: list[tree.Identifier]
+#    body: tree.BlockStatement
+#    env: Environment
+#
+#    def inspect(self):
+#        return f'fn({params.join(",")})'
+#    def type(self):
+#        return ObjectType.FUNCTION

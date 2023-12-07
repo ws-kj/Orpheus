@@ -6,6 +6,7 @@ from scanner import Scanner
 from parser import Parser
 from error_handler import ErrorHandler
 from eval import eval
+from environment import Environment
 
 class Orpheus(object):
     had_error = False
@@ -47,8 +48,10 @@ class Orpheus(object):
             print(s)
             print()
 
+        env = Environment()
+
         print("Eval:")
-        res = eval(program)
+        res = eval(program, env)
         if(res != None):
             print(res.inspect())
 

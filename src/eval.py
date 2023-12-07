@@ -1,47 +1,54 @@
 import tree 
 import obj
 from tokentype import TokenType
+from environment import Environment
 
 FALSE = obj.Bool(False)
 TRUE = obj.Bool(True)
 NIL = obj.Nil()
 
 
-def eval(node: tree.Node):
+def eval(node: tree.Node, env: Environment):
     match type(node):
         case tree.Program:
-            return eval_program(node.statements)
+            return eval_program(node.statements, env)
         case tree.ExpressionStatement:
-            return eval(node.expression)
+            return eval(node.expression, env)
         case tree.PrefixExpression:
-            right = eval(node.right)
+            right = eval(node.right, env)
             if(is_error(right)): return right
-            return eval_prefix_expression(node, right)
+            return eval_prefix_expression(node, right, env)
         case tree.InfixExpression:
-            left = eval(node.left)
-            right = eval(node.right)
+            left = eval(node.left, env)
+            right = eval(node.right, env)
             if(is_error(left)): return left
             if(is_error(right)): return right
-            return eval_infix_expression(node, left, right)
+            return eval_infix_expression(node, left, right, env)
         case tree.BlockStatement:
-            return eval_block_statement(node.statements)
+            return eval_block_statement(node.statements, env)
         case tree.ReturnStatement:
-            val = eval(node.return_value)
+            val = eval(node.return_value, env)
             if(is_error(val)): return val
             return obj.ReturnValue(val)
         case tree.IfExpression:
-            return eval_if_expression(node)
+            return eval_if_expression(node, env)
+        case tree.LetStatement:
+            val = eval(node.value, env)
+            if(is_error(val)): return val
+            env.set(node.name.value, val)
         case tree.NumLiteral:
             return obj.Number(node.value)
         case tree.Boolean:
             return bool_obj(node.value)
+        case tree.Identifier:
+            return eval_ident(node, env)
         case _:
             return None
 
-def eval_program(statements):
+def eval_program(statements, env):
     result = None
     for statement in statements:
-        result = eval(statement)
+        result = eval(statement, env)
 
         match type(result):
             case obj.ReturnValue:
@@ -52,10 +59,10 @@ def eval_program(statements):
                 pass
     return result
 
-def eval_block_statement(statements):
+def eval_block_statement(statements, env):
     result = None
     for statement in statements:
-        result = eval(statement)
+        result = eval(statement, env)
 
         if result != None:
             match result.type():
@@ -68,16 +75,22 @@ def eval_block_statement(statements):
 
     return result
 
-def eval_prefix_expression(node, right):
+def eval_ident(node, env):
+    val = env.get(node.value)
+    if val == None:
+        return error('unknown identifier: {node.value}')
+    return val
+
+def eval_prefix_expression(node, right, env):
     match node.token.type:
         case TokenType.NOT:
-            return bool_obj(eval_not_expression(right))
+            return bool_obj(eval_not_expression(right, env))
         case TokenType.MINUS:
-            return eval_minus_prefix_expression(right)
+            return eval_minus_prefix_expression(right, env)
         case _:
             return error(f'unknown operator:  {str(token.literal)} {right.type()}')
 
-def eval_infix_expression(node, left, right):
+def eval_infix_expression(node, left, right, env):
     left_val = left.value
     right_val = right.value
 
@@ -110,21 +123,21 @@ def eval_infix_expression(node, left, right):
         case _:
             return error(f'unknown operator: {left.type()} {node.token.literal} {right.type()}')
 
-def eval_not_expression(right):
+def eval_not_expression(right, env):
     return not right.value # will eventually rewrite in C
 
-def eval_minus_prefix_expression(right):
+def eval_minus_prefix_expression(right, env):
     if(right.type() != obj.ObjectType.NUMBER):
         return error(f'unknown operator: {str(right.type())}')
     return obj.Number(-right.value)
 
-def eval_if_expression(node):
-    cond = eval(node.condition)
+def eval_if_expression(node, env):
+    cond = eval(node.condition, env)
     if(is_error(cond)): return cond
     if(is_truthy(cond)):
-        return eval(node.consequence)
+        return eval(node.consequence, env)
     elif(node.alternative != None):
-        return eval(node.alternative)
+        return eval(node.alternative, env)
     else:
         return None
 
