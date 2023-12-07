@@ -43,9 +43,9 @@ class Orpheus(object):
 
         program = parser.parse_program()
 
-        #for s in program.statements:
-        #    print(s)
-        #    print()
+        for s in program.statements:
+            print(s)
+            print()
 
         print("Eval:")
         res = eval(program)

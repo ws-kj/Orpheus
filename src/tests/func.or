@@ -1,0 +1,6 @@
+fn five() -> 
+    ret 5 
+
+fn five() -> ret 5
+
+if true -> 5 + 2

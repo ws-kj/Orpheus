@@ -58,7 +58,6 @@ class Parser(object):
         self.register_prefix(TokenType.IF, self.parse_if_expression)
 
         self.register_prefix(TokenType.FN, self.parse_function_literal)
-
         self.register_infix(TokenType.LPAREN, self.parse_call_expression)
 
         self.register_infix(TokenType.EQUAL_EQUAL, self.parse_infix_expression)
@@ -131,7 +130,6 @@ class Parser(object):
         statement = tree.ExpressionStatement(self.current_token, None)
 
         statement.expression = self.parse_expression(PrecLevel.LOWEST)
-
         return statement
 
     def parse_expression(self, precedence):
@@ -191,7 +189,7 @@ class Parser(object):
             else:
                 tok = self.current_token
                 self.advance()
-                statement = self.parse_expression_statement()
+                statement = self.parse_statement()
                 return tree.BlockStatement(tok, [statement])
         else:
             if(not self.expect_peek(TokenType.NEWLINE)): return None
@@ -221,7 +219,6 @@ class Parser(object):
         if(not self.expect_peek(TokenType.LPAREN)): return None
         literal.parameters = self.parse_function_parameters()
         literal.body = self.parse_arrow_block()
-
         return literal
 
     def parse_function_parameters(self):
@@ -270,7 +267,6 @@ class Parser(object):
 
     def parse_block_statement(self):
         block = tree.BlockStatement(self.current_token, [])
-
         self.advance()
 
         while(not self.current_token_is(TokenType.DEDENT) and not self.current_token_is(TokenType.EOF)):
