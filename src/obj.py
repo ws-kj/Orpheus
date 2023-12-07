@@ -7,6 +7,7 @@ class ObjectType(Enum):
     BOOL = auto()
     NIL = auto()
     RETURN_VALUE = auto()
+    ERROR = auto()
 
 class Object(ABC):
     value: object
@@ -51,3 +52,11 @@ class ReturnValue(Object):
     def type(self):
         return ObjectType.RETURN_VALUE
 
+@dataclass 
+class Error(Object):
+    message: str
+
+    def inspect(self):
+        return "ERROR: " + self.message
+    def type(self):
+        return ObjectType.ERROR

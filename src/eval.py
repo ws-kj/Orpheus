@@ -6,6 +6,7 @@ FALSE = obj.Bool(False)
 TRUE = obj.Bool(True)
 NIL = obj.Nil()
 
+
 def eval(node: tree.Node):
     match type(node):
         case tree.Program:
@@ -38,9 +39,13 @@ def eval_program(statements):
     for statement in statements:
         result = eval(statement)
 
-        if type(result) == obj.ReturnValue:
-            return result
-
+        match type(result):
+            case obj.ReturnValue:
+                return result
+            case obj.Error:
+                return result
+            case _:
+                pass
     return result
 
 def eval_block_statement(statements):
@@ -48,8 +53,14 @@ def eval_block_statement(statements):
     for statement in statements:
         result = eval(statement)
 
-        if result != None and result.type() == obj.ObjectType.RETURN_VALUE:
-            return result
+        if result != None:
+            match result.type():
+                case obj.ObjectType.RETURN_VALUE:
+                    return result
+                case obj.ObjectType.ERROR:
+                    return result
+                case _:
+                    pass
 
     return result
 
@@ -60,11 +71,14 @@ def eval_prefix_expression(node, right):
         case TokenType.MINUS:
             return eval_minus_prefix_expression(right)
         case _:
-            return None
+            return error(f'unknown operator:  {str(token.literal)} {right.type()}')
 
 def eval_infix_expression(node, left, right):
     left_val = left.value
     right_val = right.value
+
+    if(left.type() != right.type()):
+        return error(f'type mismatch: {left.type()} {right.type()}')
 
     match node.token.type:
         case TokenType.PLUS:
@@ -75,6 +89,8 @@ def eval_infix_expression(node, left, right):
             return obj.Number(left_val * right_val)
         case TokenType.SLASH:
             return obj.Number(left_val / right_val)
+        case TokenType.PERCENT:
+            return obj.Number(left_val % right_val)
         case TokenType.LESS:
             return bool_obj(left_val < right_val)
         case TokenType.GREATER:
@@ -88,14 +104,14 @@ def eval_infix_expression(node, left, right):
         case TokenType.BANG_EQUAL:
             return bool_obj(left_val != right_val)
         case _:
-            return None
+            return error(f'unknown operator: {left.type()} {node.token.literal} {right.type()}')
 
 def eval_not_expression(right):
     return not right.value # will eventually rewrite in C
 
 def eval_minus_prefix_expression(right):
     if(right.type() != obj.ObjectType.NUMBER):
-        return None
+        return error(f'unknown operator: {str(right.type())}')
     return obj.Number(-right.value)
 
 def eval_if_expression(node):
@@ -115,3 +131,6 @@ def is_truthy(obj):
 def bool_obj(value):
     if(value): return TRUE
     return FALSE
+
+def error(msg):
+    return obj.Error(message=msg)

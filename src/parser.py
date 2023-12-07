@@ -26,6 +26,7 @@ class Parser(object):
         TokenType.MINUS: PrecLevel.SUM,
         TokenType.SLASH: PrecLevel.PRODUCT,
         TokenType.STAR: PrecLevel.PRODUCT,
+        TokenType.PERCENT: PrecLevel.PRODUCT,
         TokenType.LPAREN: PrecLevel.CALL
     }
 
@@ -70,6 +71,7 @@ class Parser(object):
         self.register_infix(TokenType.MINUS, self.parse_infix_expression)
         self.register_infix(TokenType.SLASH, self.parse_infix_expression)
         self.register_infix(TokenType.STAR, self.parse_infix_expression)
+        self.register_infix(TokenType.PERCENT, self.parse_infix_expression)
 
     def parse_first(self, tokens):
         self.initialized = True

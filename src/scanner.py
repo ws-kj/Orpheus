@@ -79,6 +79,8 @@ class Scanner(object):
                 self.add_token(TokenType.STAR)
             case '/':
                 self.add_token(TokenType.SLASH)
+            case '%':
+                self.add_token(TokenType.PERCENT)
             case ',':
                 self.add_token(TokenType.COMMA)
             case '.':
@@ -137,7 +139,6 @@ class Scanner(object):
             self.level = n
         
         while(n < self.level):
-            print(f'n: {n} self.level: {self.level}')
             self.add_token(TokenType.DEDENT)
 
             if(self.levels == []):

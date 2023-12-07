@@ -28,6 +28,7 @@ class TokenType(Enum):
     DOT = auto()
     HASH = auto()
     SLASH = auto()
+    PERCENT = auto()
 
     # 1 or 2 char tokens
     BANG = auto()
