@@ -9,7 +9,7 @@ NIL = obj.Nil()
 def eval(node: tree.Node):
     match type(node):
         case tree.Program:
-            return eval_statements(node.statements)
+            return eval_program(node.statements)
         case tree.ExpressionStatement:
             return eval(node.expression)
         case tree.PrefixExpression:
@@ -19,6 +19,13 @@ def eval(node: tree.Node):
             left = eval(node.left)
             right = eval(node.right)
             return eval_infix_expression(node, left, right)
+        case tree.BlockStatement:
+            return eval_block_statement(node.statements)
+        case tree.ReturnStatement:
+            val = eval(node.return_value)
+            return obj.ReturnValue(val)
+        case tree.IfExpression:
+            return eval_if_expression(node)
         case tree.NumLiteral:
             return obj.Number(node.value)
         case tree.Boolean:
@@ -26,10 +33,23 @@ def eval(node: tree.Node):
         case _:
             return None
 
-def eval_statements(statements):
+def eval_program(statements):
     result = None
     for statement in statements:
         result = eval(statement)
+
+        if type(result) == obj.ReturnValue:
+            return result
+
+    return result
+
+def eval_block_statement(statements):
+    result = None
+    for statement in statements:
+        result = eval(statement)
+
+        if result != None and result.type() == obj.ObjectType.RETURN_VALUE:
+            return result
 
     return result
 
@@ -78,7 +98,19 @@ def eval_minus_prefix_expression(right):
         return None
     return obj.Number(-right.value)
 
+def eval_if_expression(node):
+    cond = eval(node.condition)
+    if(is_truthy(cond)):
+        return eval(node.consequence)
+    elif(node.alternative != None):
+        return eval(node.alternative)
+    else:
+        return None
 
+def is_truthy(obj):
+    if(obj == NIL or obj == FALSE):
+        return False
+    return True
 
 def bool_obj(value):
     if(value): return TRUE

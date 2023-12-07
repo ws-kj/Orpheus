@@ -6,6 +6,7 @@ class ObjectType(Enum):
     NUMBER = auto()
     BOOL = auto()
     NIL = auto()
+    RETURN_VALUE = auto()
 
 class Object(ABC):
     value: object
@@ -41,3 +42,12 @@ class Nil(Object):
         return "nil"
     def type(self):
         return ObjectType.NIL
+
+@dataclass
+class ReturnValue(Object):
+    obj: Object
+    def inspect(self):
+        return str(self.obj.inspect())
+    def type(self):
+        return ObjectType.RETURN_VALUE
+

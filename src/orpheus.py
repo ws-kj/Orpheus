@@ -48,7 +48,7 @@ class Orpheus(object):
             print()
 
         print("Eval:")
-        print(eval(program).value)
+        print(eval(program).inspect())
 
 if __name__ == "__main__":
     interpreter = Orpheus()
