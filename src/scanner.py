@@ -164,7 +164,6 @@ class Scanner(object):
             token_type = self.keywords[text]
         else:
             token_type = TokenType.IDENTIFIER
-
         self.add_token(token_type)
 
     def number(self):
@@ -237,4 +236,4 @@ class Scanner(object):
 
     def add_token(self, token_type: TokenType, literal: object = None):
         text = self.source[self.start:self.current]
-        self.tokens.append(Token(token_type, text, literal, self.line))
+        self.tokens.append(Token(token_type, text, text, self.line))

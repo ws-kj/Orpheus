@@ -78,7 +78,7 @@ def eval_block_statement(statements, env):
 def eval_ident(node, env):
     val = env.get(node.value)
     if val == None:
-        return error('unknown identifier: {node.value}')
+        return error(f'unknown identifier: {node.value}')
     return val
 
 def eval_prefix_expression(node, right, env):

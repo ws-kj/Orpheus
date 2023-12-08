@@ -3,3 +3,6 @@ func five()
     ret 5
 
 var a = 2
+
+a * 2
+
