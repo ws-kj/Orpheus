@@ -1,13 +1,5 @@
-let adder = fn(a, b)
+func five()
 ->
-    ret a + b
-
-#TODO fix advance fail if last token is inside ret statement?
-
-let a = fn() -> 
     ret 5
 
-let a = 3 * 5
-
-if a > 14
--> a / 2
+var a = 2

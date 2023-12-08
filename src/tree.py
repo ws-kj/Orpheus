@@ -97,6 +97,7 @@ class BlockStatement(Statement):
 @dataclass 
 class FunctionLiteral(Expression):
     token: Token
+    name: Identifier
     params: list[Identifier]
     body: BlockStatement
     
@@ -140,7 +141,7 @@ class ExpressionStatement(Statement):
         return self.token.literal
 
 @dataclass
-class LetStatement(Statement):
+class VarStatement(Statement):
     token: Token
     name:  Identifier
     value: Expression

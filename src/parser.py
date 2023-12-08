@@ -57,7 +57,7 @@ class Parser(object):
         self.register_prefix(TokenType.ARROW, self.parse_block_statement)
         self.register_prefix(TokenType.IF, self.parse_if_expression)
 
-        self.register_prefix(TokenType.FN, self.parse_function_literal)
+        self.register_prefix(TokenType.FUNC, self.parse_function_literal)
         self.register_infix(TokenType.LPAREN, self.parse_call_expression)
 
         self.register_infix(TokenType.EQUAL_EQUAL, self.parse_infix_expression)
@@ -118,8 +118,8 @@ class Parser(object):
 
     def parse_statement(self):
         match self.current_token.type:
-            case TokenType.LET:
-                return self.parse_let_statement()
+            case TokenType.VAR:
+                return self.parse_var_statement()
             case TokenType.RET:
                 return self.parse_return_statement()
             case TokenType.NEWLINE | TokenType.INDENT | TokenType.DEDENT:
@@ -214,8 +214,9 @@ class Parser(object):
         return expression
 
     def parse_function_literal(self):
-        literal = tree.FunctionLiteral(self.current_token, None, None)
-
+        literal = tree.FunctionLiteral(self.current_token, None, None, None)
+        if(not self.expect_peek(TokenType.IDENTIFIER)): return None
+        literal.name = tree.Identifier(self.current_token, self.current_token.literal)
         if(not self.expect_peek(TokenType.LPAREN)): return None
         literal.parameters = self.parse_function_parameters()
         literal.body = self.parse_arrow_block()
@@ -297,8 +298,8 @@ class Parser(object):
         return expression
 
     #TODO implement
-    def parse_let_statement(self):
-        statement = tree.LetStatement(self.current_token, None, None)
+    def parse_var_statement(self):
+        statement = tree.VarStatement(self.current_token, None, None)
 
         if(not self.expect_peek(TokenType.IDENTIFIER)):
             return None

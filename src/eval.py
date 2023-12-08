@@ -32,7 +32,7 @@ def eval(node: tree.Node, env: Environment):
             return obj.ReturnValue(val)
         case tree.IfExpression:
             return eval_if_expression(node, env)
-        case tree.LetStatement:
+        case tree.VarStatement:
             val = eval(node.value, env)
             if(is_error(val)): return val
             env.set(node.name.value, val)

@@ -14,7 +14,7 @@ class Scanner(object):
         "else": TokenType.ELSE,
         "for": TokenType.FOR,
         "while": TokenType.WHILE,
-        "let": TokenType.LET,
+        "var": TokenType.VAR,
         "ret": TokenType.RET,
         "pass": TokenType.PASS,
         "break": TokenType.BREAK,
@@ -28,7 +28,7 @@ class Scanner(object):
         "num": TokenType.T_NUM,
         "str": TokenType.T_STR,
         "nil": TokenType.T_NIL,
-        "fn": TokenType.FN
+        "func": TokenType.FUNC
     }
 
     def __init__(self, source: str):
