@@ -218,7 +218,7 @@ class Parser(object):
         if(not self.expect_peek(TokenType.IDENTIFIER)): return None
         literal.name = tree.Identifier(self.current_token, self.current_token.literal)
         if(not self.expect_peek(TokenType.LPAREN)): return None
-        literal.parameters = self.parse_function_parameters()
+        literal.params = self.parse_function_parameters()
         literal.body = self.parse_arrow_block()
         return literal
 
@@ -237,7 +237,7 @@ class Parser(object):
             idents.append(ident)
 
         if(not self.expect_peek(TokenType.RPAREN)): return None
-
+        print(idents)
         return idents
 
     def parse_call_expression(self, function):
@@ -288,7 +288,7 @@ class Parser(object):
 
     def parse_infix_expression(self, left):
         expression = tree.InfixExpression(
-            self.current_token, left, self.current_token.lexeme, None)
+            self.current_token, left, self.current_token.literal, None)
 
 
         prec = self.current_precedence()

@@ -42,6 +42,18 @@ def eval(node: tree.Node, env: Environment):
             return bool_obj(node.value)
         case tree.Identifier:
             return eval_ident(node, env)
+        case tree.FunctionLiteral:
+            func_obj = obj.Function(node.name, node.params, node.body, env)
+            env.set(node.name.value, func_obj)
+            return func_obj
+        case tree.CallExpression:
+            func = eval(node.function, env)
+            if(is_error(func)): 
+                return func
+            args = eval_expressions(node.args, env)
+            if(len(args) == 1 and is_error(args[0])): 
+                return args[0]
+            return apply_function(func, args)  
         case _:
             return None
 
@@ -58,6 +70,33 @@ def eval_program(statements, env):
             case _:
                 pass
     return result
+
+def eval_expressions(exps, env):
+    result = []
+    for e in exps:
+        evaluated = eval(e, env)
+        if(is_error(evaluated)): return [evaluated]
+        result.append(evaluated)
+    return result
+
+def apply_function(func, args):
+    if(type(func) != obj.Function): return error(f'not a function: {type(func)}')
+    ext_env = extend_func_env(func, args)
+    evaluated = eval(func.body, ext_env)
+    return unwrap_return_value(evaluated)
+
+def extend_func_env(func, args):
+    env = Environment(outer=func.env)
+    for idx, param in enumerate(func.params):
+        env.set(param.value, args[idx])
+
+    return env
+
+def unwrap_return_value(return_obj):
+    if return_obj is obj.ReturnValue:
+        return return_obj.value
+
+    return return_obj
 
 def eval_block_statement(statements, env):
     result = None

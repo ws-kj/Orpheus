@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum, auto
 
+from environment import Environment
+import tree 
+
 class ObjectType(Enum):
     NUMBER = auto()
     BOOL = auto()
@@ -46,9 +49,9 @@ class Nil(Object):
 
 @dataclass
 class ReturnValue(Object):
-    obj: Object
+    value: Object
     def inspect(self):
-        return str(self.obj.inspect())
+        return str(self.value.inspect())
     def type(self):
         return ObjectType.RETURN_VALUE
 
@@ -61,13 +64,14 @@ class Error(Object):
     def type(self):
         return ObjectType.ERROR
 
-#@dataclass 
-#class Function(Object):
-#    params: list[tree.Identifier]
-#    body: tree.BlockStatement
-#    env: Environment
-#
-#    def inspect(self):
-#        return f'fn({params.join(",")})'
-#    def type(self):
-#        return ObjectType.FUNCTION
+@dataclass 
+class Function(Object):
+    name: tree.Identifier
+    params: list[tree.Identifier]
+    body: tree.BlockStatement
+    env: Environment
+
+    def inspect(self):
+        return f'func {self.name.value}'
+    def type(self):
+        return ObjectType.FUNCTION

@@ -47,7 +47,7 @@ class Scanner(object):
             self.start = self.current
             self.scan_token()
 
-        self.tokens.append(Token(TokenType.EOF, "", None, self.line))
+        self.tokens.append(Token(TokenType.EOF, None, self.line))
         return self.tokens
 
     def is_at_end(self):
@@ -236,4 +236,4 @@ class Scanner(object):
 
     def add_token(self, token_type: TokenType, literal: object = None):
         text = self.source[self.start:self.current]
-        self.tokens.append(Token(token_type, text, text, self.line))
+        self.tokens.append(Token(token_type, text, self.line))

@@ -1,8 +1,7 @@
-func five()
-->
-    ret 5
+func add(a, b) -> a + b
 
-var a = 2
+add(3, 2)
 
-a * 2
+func operate(a, b, f) -> f(a, b)
 
+operate(1, 2, add)

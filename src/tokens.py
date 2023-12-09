@@ -5,7 +5,6 @@ from tokentype import TokenType
 @dataclass 
 class Token:
     type: TokenType
-    lexeme: str
     literal: str 
     line: int
     
