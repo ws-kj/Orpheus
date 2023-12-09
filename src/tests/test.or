@@ -1,13 +1,9 @@
-action my_func (a: int)
+func ret_adder()
 ->
-    if a > 5
-    ->
-        print 6
+    ret func adder(a, b) -> a + b
 
-    print "Hello World"
-    <<
-        Write a haiku
-    >> 
-    return 5.4
-             
-my_func()
+var myfunc = ret_adder()
+
+func add(a, b) -> ret a + b
+
+add(5, 2) + 1

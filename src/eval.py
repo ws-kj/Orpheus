@@ -91,7 +91,7 @@ def extend_func_env(func, args):
     return env
 
 def unwrap_return_value(return_obj):
-    if return_obj is obj.ReturnValue:
+    if type(return_obj) == obj.ReturnValue:
         return return_obj.value
 
     return return_obj
@@ -109,7 +109,6 @@ def eval_block_statement(statements, env):
                     return result
                 case _:
                     pass
-
     return result
 
 def eval_ident(node, env):
