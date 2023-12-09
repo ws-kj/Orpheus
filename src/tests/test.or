@@ -12,3 +12,5 @@ func add(a, b) -> ret a + b
 add(5, 2) + 1
 
 "hmm wow!" == "hmm" + " wow!"
+
+len("test") * 2

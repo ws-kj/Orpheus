@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod 
 from dataclasses import dataclass
+from typing import Callable
 from enum import Enum, auto
 
 from environment import Environment
@@ -13,6 +14,7 @@ class ObjectType(Enum):
     RETURN_VALUE = auto()
     ERROR = auto()
     FUNCTION = auto()
+    BUILTIN = auto()
 
 class Object(ABC):
     @abstractmethod 
@@ -73,6 +75,16 @@ class Error(Object):
         return "ERROR: " + self.message
     def type(self):
         return ObjectType.ERROR
+
+BuiltinFunction = Callable[..., Object]
+@dataclass 
+class Builtin(Object):
+    function: BuiltinFunction
+
+    def inspect(self):
+        return "builtin function"
+    def type(self):
+        return ObjectType.BUILTIN
 
 @dataclass 
 class Function(Object):

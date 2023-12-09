@@ -2,6 +2,7 @@ import tree
 import obj
 from tokentype import TokenType
 from environment import Environment
+from builtin import builtins
 
 FALSE = obj.Bool(False)
 TRUE = obj.Bool(True)
@@ -80,10 +81,16 @@ def eval_expressions(exps, env):
     return result
 
 def apply_function(func, args):
-    if(type(func) != obj.Function): return error(f'not a function: {type(func)}')
-    ext_env = extend_func_env(func, args)
-    evaluated = eval(func.body, ext_env)
-    return unwrap_return_value(evaluated)
+    match type(func):
+        case obj.Function:
+            ext_env = extend_func_env(func, args)
+            evaluated = eval(func.body, ext_env)
+            return unwrap_return_value(evaluated)
+        case obj.Builtin:
+            print(func)
+            return func.function(args)
+        case _:
+            return error(f'not a function: {type(func)}')
 
 def extend_func_env(func, args):
     env = Environment(outer=func.env)
@@ -115,9 +122,12 @@ def eval_block_statement(statements, env):
 
 def eval_ident(node, env):
     val = env.get(node.value)
-    if val == None:
-        return error(f'unknown identifier: {node.value}')
-    return val
+    if val != None:
+        return val
+    func = builtins.get(node.value)
+    if func != None:
+        return func
+    return error(f'unknown identifier: {node.value}')
 
 def eval_prefix_expression(node, right, env):
     match node.token.type:
