@@ -38,6 +38,8 @@ def eval(node: tree.Node, env: Environment):
             env.set(node.name.value, val)
         case tree.NumLiteral:
             return obj.Number(node.value)
+        case tree.StringLiteral:
+            return obj.String(node.value)
         case tree.Boolean:
             return bool_obj(node.value)
         case tree.Identifier:

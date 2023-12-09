@@ -73,6 +73,17 @@ class NumLiteral(Expression):
     def token_literal(self):
         return self.token.literal
 
+
+@dataclass 
+class StringLiteral(Expression):
+    token: Token
+    value: str
+
+    def expression_node(self):
+        pass
+    def token_literal(self):
+        return self.token.literal
+
 @dataclass 
 class Boolean(Expression):
     token: Token

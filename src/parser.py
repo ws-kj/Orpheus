@@ -46,7 +46,7 @@ class Parser(object):
     def register_all(self):
         self.register_prefix(TokenType.IDENTIFIER, self.parse_identifier)
         self.register_prefix(TokenType.NUMBER, self.parse_number)
-       
+        self.register_prefix(TokenType.STRING, self.parse_string_literal) 
         self.register_prefix(TokenType.NOT, self.parse_prefix_expression)
         self.register_prefix(TokenType.MINUS, self.parse_prefix_expression)
 
@@ -168,7 +168,10 @@ class Parser(object):
             ErrorManager.error(
                 self.current_token.line, f'Could not parse integer literal from {literal}')
             return None
-      
+     
+    def parse_string_literal(self):
+       return tree.StringLiteral(self.current_token, self.current_token.literal) 
+
     def parse_boolean(self):
         return tree.Boolean(self.current_token, self.current_token_is(TokenType.TRUE))
 

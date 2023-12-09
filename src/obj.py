@@ -7,6 +7,7 @@ import tree
 
 class ObjectType(Enum):
     NUMBER = auto()
+    STRING = auto()
     BOOL = auto()
     NIL = auto()
     RETURN_VALUE = auto()
@@ -29,6 +30,15 @@ class Number(Object):
         return str(self.value)
     def type(self):
         return ObjectType.NUMBER
+
+@dataclass
+class String(Object):
+    value: str
+
+    def inspect(self):
+        return "\"" + self.value + "\""
+    def type(self):
+        return ObjectType.STRING
 
 @dataclass
 class Bool(Object):
