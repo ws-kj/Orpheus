@@ -9,13 +9,6 @@ func add(a, b) -> ret a + b
 
 "hello"
 
-<< 
-hello 
->>
-
-
 add(5, 2) + 1
 
-var a = "hmm"
-
-a
+"hmm wow!" == "hmm" + " wow!"

@@ -135,25 +135,37 @@ def eval_infix_expression(node, left, right, env):
     if(left.type() != right.type()):
         return error(f'type mismatch: {left.type()} {right.type()}')
 
+    match left.type():
+        case obj.ObjectType.NUMBER:
+            match node.token.type:
+                case TokenType.PLUS:
+                    return obj.Number(left_val + right_val)
+                case TokenType.MINUS:
+                    return obj.Number(left_val - right_val)
+                case TokenType.STAR:
+                    return obj.Number(left_val * right_val)
+                case TokenType.SLASH:
+                    return obj.Number(left_val / right_val)
+                case TokenType.PERCENT:
+                    return obj.Number(left_val % right_val)
+                case TokenType.LESS:
+                    return bool_obj(left_val < right_val)
+                case TokenType.GREATER:
+                    return bool_obj(left_val > right_val)
+                case TokenType.LESS_EQUAL:
+                    return bool_obj(left_val <= right_val)
+                case TokenType.GREATER_EQUAL:
+                    return bool_obj(left_val >= right_val)
+                case _:
+                    pass
+        case obj.ObjectType.STRING:
+            match node.token.type:
+                case TokenType.PLUS:
+                    return obj.String(left_val + right_val)
+                case _:
+                    pass
+
     match node.token.type:
-        case TokenType.PLUS:
-            return obj.Number(left_val + right_val)
-        case TokenType.MINUS:
-            return obj.Number(left_val - right_val)
-        case TokenType.STAR:
-            return obj.Number(left_val * right_val)
-        case TokenType.SLASH:
-            return obj.Number(left_val / right_val)
-        case TokenType.PERCENT:
-            return obj.Number(left_val % right_val)
-        case TokenType.LESS:
-            return bool_obj(left_val < right_val)
-        case TokenType.GREATER:
-            return bool_obj(left_val > right_val)
-        case TokenType.LESS_EQUAL:
-            return bool_obj(left_val <= right_val)
-        case TokenType.GREATER_EQUAL:
-            return bool_obj(left_val >= right_val)
         case TokenType.EQUAL_EQUAL:
             return bool_obj(left_val == right_val)
         case TokenType.BANG_EQUAL:
