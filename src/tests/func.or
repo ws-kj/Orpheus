@@ -5,3 +5,12 @@ add(3, 2)
 func operate(a, b, f) -> f(a, b)
 
 operate(1, 2, add)
+
+func d(a)
+->
+    if a < 10 -> ret 2 * a
+    ret a
+
+d(5)
+
+d(12)

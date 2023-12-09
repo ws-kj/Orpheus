@@ -63,8 +63,6 @@ def eval_program(statements, env):
         result = eval(statement, env)
 
         match type(result):
-            case obj.ReturnValue:
-                return result
             case obj.Error:
                 return result
             case _:
