@@ -9,7 +9,7 @@ class Token:
     line: int
     
     def __str__(self):
-        res = f'{self.type} {self.lexeme}'
+        res = f'{self.type}'
         if self.literal != None:
             res += f' {self.literal}'
 

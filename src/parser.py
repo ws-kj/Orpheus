@@ -220,6 +220,9 @@ class Parser(object):
         expression.condition = self.parse_expression(PrecLevel.LOWEST)
         expression.consequence = self.parse_arrow_block()
 
+        if(self.peek_token_is(TokenType.ELSE)):
+            self.advance()
+            expression.alternative = self.parse_arrow_block()
         return expression
 
     def parse_function_literal(self):

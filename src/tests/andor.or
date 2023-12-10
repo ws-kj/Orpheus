@@ -1,4 +1,4 @@
-var b = 2 * 10
+var b = 2 * 11
 
 b / 2 == 10
 
@@ -6,3 +6,6 @@ b / 2 == 10
 if b > 15 and b / 2 == 10
 ->
     println("Cool!")
+else
+->
+    println("Not cool!")
