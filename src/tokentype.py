@@ -22,7 +22,7 @@ class TokenType(Enum):
     RBRACKET = auto()
     MINUS = auto()
     PLUS = auto()
-    SEMICOLON = auto()
+    SEMICOLON = auto() # obsolete?
     STAR = auto()
     COMMA = auto()
     DOT = auto()
@@ -48,27 +48,27 @@ class TokenType(Enum):
     ARROW = auto()  # ->
 
     # orpheus keywords
-    MODEL = auto()
-    TOOL = auto()
-    ACTION = auto()
-    SPAWN = auto()
+    MODEL = auto() # todo
+    TOOL = auto() # todo
+    ACTION = auto() # todo
+    SPAWN = auto() # todo 
     FUNC = auto() 
-    T_NUM = auto()
-    T_STR = auto()
-    T_NIL = auto()
+    T_NUM = auto() # todo
+    T_STR = auto() # todo
+    T_NIL = auto() # todo
 
     # keywords
-    AND = auto()
-    OR = auto()
+    AND = auto() # todo
+    OR = auto() # todo
     NOT = auto()
     TRUE = auto()
     FALSE = auto()
     IF = auto()
-    ELSE = auto()
-    FOR = auto()
-    WHILE = auto()
+    ELSE = auto() # todo
+    FOR = auto() # todo 
+    WHILE = auto() # todo
     VAR = auto()
-    RET = auto()
-    PASS = auto()
-    BREAK = auto()
-    LOOP = auto()
+    RETURN = auto()
+    PASS = auto() # todo
+    BREAK = auto() #todo 
+    LOOP = auto() #todo

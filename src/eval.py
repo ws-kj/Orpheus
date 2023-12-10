@@ -141,7 +141,6 @@ def eval_prefix_expression(node, right, env):
 def eval_infix_expression(node, left, right, env):
     left_val = left.value
     right_val = right.value
-
     if(left.type() != right.type()):
         return ErrorHandler.runtime_error(f'type mismatch: {left.type()} {right.type()}')
 
@@ -174,6 +173,12 @@ def eval_infix_expression(node, left, right, env):
                     return obj.String(left_val + right_val)
                 case _:
                     pass
+        case obj.ObjectType.BOOL:
+            match node.token.type:
+                case TokenType.AND:
+                    return obj.Bool(left_val and right_val)
+                case TokenType.OR:
+                    return obj.Bool(left_val or right_val)
 
     match node.token.type:
         case TokenType.EQUAL_EQUAL:

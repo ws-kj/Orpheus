@@ -15,7 +15,7 @@ class Scanner(object):
         "for": TokenType.FOR,
         "while": TokenType.WHILE,
         "var": TokenType.VAR,
-        "ret": TokenType.RET,
+        "return": TokenType.RETURN,
         "pass": TokenType.PASS,
         "break": TokenType.BREAK,
         "loop": TokenType.LOOP,

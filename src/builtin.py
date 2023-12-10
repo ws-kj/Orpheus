@@ -12,30 +12,25 @@ def bf_len(args):
             return ErrorHandler.runtime_error(f'len: arg type {args[0].type()} not supported')
 
 def bf_print(args):
-    if(len(args) != 1):
+    if(len(args) > 1):
         return ErrorHandler.runtime_error(f'print: expected 1 argument, got {len(args)}')
-    
-    match type(args[0]):
-        case obj.String:
-            raw = args[0].value.encode().decode("unicode_escape")
-            print(raw, end="")
-        case _:
-            return ErrorHandler.runtime_error(
-                f'print: arg type {args[0].type()} not supported')
+    if(len(args) == 0): 
+        return obj.Nil()
+    raw = str(args[0].value).encode().decode("unicode_escape")
+    print(raw, end="")
 
     return obj.Nil()
 
 def bf_println(args):
-    if(len(args) != 1):
+    if(len(args) > 1):
         return ErrorHandler.runtime_error(f'print: expected 1 argument, got {len(args)}')
-    
-    match type(args[0]):
-        case obj.String:
-            raw = args[0].value.encode().decode("unicode_escape")
-            print(raw)
-        case _:
-            return ErrorHandler.runtime_error(
-                f'print: arg type {args[0].type()} not supported')
+
+    if(len(args) == 0):
+        print()
+        return obj.Nil()
+
+    raw = str(args[0].value).encode().decode("unicode_escape")
+    print(raw)
 
     return obj.Nil()
 

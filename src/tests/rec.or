@@ -1,0 +1,13 @@
+func test(n)
+->
+    if n > 10 
+    ->
+        return "too big!"
+
+    println(n)
+    test(n+1)
+
+println(test(12))
+
+println(test(1))
+

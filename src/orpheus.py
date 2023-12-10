@@ -44,9 +44,12 @@ class Orpheus(object):
 
         program = parser.parse_program()
 
-        #for s in program.statements:
-        #    print(s)
-        #    print()
+        debug = False
+
+        if(debug):
+            for s in program.statements:
+                print(s)
+                print()
 
         env = Environment()
 

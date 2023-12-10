@@ -6,6 +6,7 @@ from enum import Enum, IntEnum, auto
 
 class PrecLevel(IntEnum):
     LOWEST = auto()
+    AND_OR = auto()
     EQUALS = auto()
     LESS_GREATER = auto()
     SUM = auto()
@@ -16,6 +17,8 @@ class PrecLevel(IntEnum):
 class Parser(object):
 
     precedences = {
+        TokenType.AND: PrecLevel.AND_OR,
+        TokenType.OR: PrecLevel.AND_OR,
         TokenType.EQUAL_EQUAL: PrecLevel.EQUALS,
         TokenType.BANG_EQUAL: PrecLevel.EQUALS,
         TokenType.LESS: PrecLevel.LESS_GREATER,
@@ -71,6 +74,9 @@ class Parser(object):
         self.register_infix(TokenType.SLASH, self.parse_infix_expression)
         self.register_infix(TokenType.STAR, self.parse_infix_expression)
         self.register_infix(TokenType.PERCENT, self.parse_infix_expression)
+        self.register_infix(TokenType.AND, self.parse_infix_expression)
+        self.register_infix(TokenType.OR, self.parse_infix_expression)
+        
 
     def parse_first(self, tokens):
         self.initialized = True
@@ -120,7 +126,7 @@ class Parser(object):
         match self.current_token.type:
             case TokenType.VAR:
                 return self.parse_var_statement()
-            case TokenType.RET:
+            case TokenType.RETURN:
                 return self.parse_return_statement()
             case TokenType.NEWLINE | TokenType.INDENT | TokenType.DEDENT:
                 return None
@@ -299,7 +305,6 @@ class Parser(object):
 
         return expression
 
-    #TODO implement
     def parse_var_statement(self):
         statement = tree.VarStatement(self.current_token, None, None)
 
@@ -317,7 +322,6 @@ class Parser(object):
 
         return statement
 
-    #TODO implement
     def parse_return_statement(self):
         statement = tree.ReturnStatement(self.current_token, None)
         self.advance()
