@@ -240,7 +240,6 @@ class Parser(object):
             idents.append(ident)
 
         if(not self.expect_peek(TokenType.RPAREN)): return None
-        print(idents)
         return idents
 
     def parse_call_expression(self, function):

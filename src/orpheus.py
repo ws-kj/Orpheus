@@ -44,13 +44,13 @@ class Orpheus(object):
 
         program = parser.parse_program()
 
-        for s in program.statements:
-            print(s)
-            print()
+        #for s in program.statements:
+        #    print(s)
+        #    print()
 
         env = Environment()
 
-        print("Eval:")
+        #print("Eval:")
         res = eval(program, env)
         if(res != None):
             print(res.inspect())

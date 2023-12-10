@@ -14,3 +14,7 @@ add(5, 2) + 1
 "hmm wow!" == "hmm" + " wow!"
 
 len("test") * 2
+
+print("Hello World!\n")
+
+5 * 2

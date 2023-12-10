@@ -2,6 +2,7 @@ import tree
 import obj
 from tokentype import TokenType
 from environment import Environment
+from error_handler import ErrorHandler
 from builtin import builtins
 
 FALSE = obj.Bool(False)
@@ -87,10 +88,9 @@ def apply_function(func, args):
             evaluated = eval(func.body, ext_env)
             return unwrap_return_value(evaluated)
         case obj.Builtin:
-            print(func)
             return func.function(args)
         case _:
-            return error(f'not a function: {type(func)}')
+            return ErrorHandler.runtime_error(f'not a function: {type(func)}')
 
 def extend_func_env(func, args):
     env = Environment(outer=func.env)
@@ -127,7 +127,7 @@ def eval_ident(node, env):
     func = builtins.get(node.value)
     if func != None:
         return func
-    return error(f'unknown identifier: {node.value}')
+    return ErrorHandler.runtime_error(f'unknown identifier: {node.value}')
 
 def eval_prefix_expression(node, right, env):
     match node.token.type:
@@ -136,14 +136,14 @@ def eval_prefix_expression(node, right, env):
         case TokenType.MINUS:
             return eval_minus_prefix_expression(right, env)
         case _:
-            return error(f'unknown operator:  {str(token.literal)} {right.type()}')
+            return ErrorHandler.runtime_error(f'unknown operator:  {str(token.literal)} {right.type()}')
 
 def eval_infix_expression(node, left, right, env):
     left_val = left.value
     right_val = right.value
 
     if(left.type() != right.type()):
-        return error(f'type mismatch: {left.type()} {right.type()}')
+        return ErrorHandler.runtime_error(f'type mismatch: {left.type()} {right.type()}')
 
     match left.type():
         case obj.ObjectType.NUMBER:
@@ -181,14 +181,14 @@ def eval_infix_expression(node, left, right, env):
         case TokenType.BANG_EQUAL:
             return bool_obj(left_val != right_val)
         case _:
-            return error(f'unknown operator: {left.type()} {node.token.literal} {right.type()}')
+            return ErrorHandler.runtime_error(f'unknown operator: {left.type()} {node.token.literal} {right.type()}')
 
 def eval_not_expression(right, env):
     return not right.value # will eventually rewrite in C
 
 def eval_minus_prefix_expression(right, env):
     if(right.type() != obj.ObjectType.NUMBER):
-        return error(f'unknown operator: {str(right.type())}')
+        return ErrorHandler.runtime_error(f'unknown operator: {str(right.type())}')
     return obj.Number(-right.value)
 
 def eval_if_expression(node, env):
