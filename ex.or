@@ -30,6 +30,14 @@ fn fizzbuzz(n: num)
         if n % 3 == 0 -> print "Fizz"
         if n % 5 == 0 -> print "Buzz"
         
+let fb = fn(n: num) 
+->
+    var i: num = 0
+    while i <= n
+        if n % 3 == 0 -> print "Fizz"
+        if n % 5 == 0 -> print "Buzz"
+        if n % 3 or n % 5 -> print "\n"
+
 
 // actions are functions that interact with model
 action fn desc_os() : str
