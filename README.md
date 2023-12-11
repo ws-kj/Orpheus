@@ -1,12 +1,14 @@
 # Orpheus
 An AI-first programming language
+
 --
+
 This is a research prototype.
 
 Core ideas:
-    * First class LLM operations (invocation, agents, vectorization, etc)
-    * Clean, minimal syntax suited for mixing prompts and code
-    * Seamless Python interop
+*   First class LLM operations (invocation, agents, vectorization, etc)
+*   Clean, minimal syntax suited for mixing prompts and code
+*   Seamless Python interop
 
 Development goals:
 *    Python based interpreter (dynamic, no LLM)
