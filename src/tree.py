@@ -162,7 +162,17 @@ class VarStatement(Statement):
 
     def token_literal(self):
         return self.token.literal
-        
+       
+@dataclass 
+class PassStatement(Statement):
+    token: Token
+    
+    def statement_node(self):
+        pass
+
+    def token_literal(self):
+        return self.token.literal
+
 @dataclass 
 class ReturnStatement(Statement):
     token: Token

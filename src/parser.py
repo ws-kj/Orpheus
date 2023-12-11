@@ -60,6 +60,8 @@ class Parser(object):
         self.register_prefix(TokenType.ARROW, self.parse_block_statement)
         self.register_prefix(TokenType.IF, self.parse_if_expression)
 
+        self.register_prefix(TokenType.PASS, self.parse_pass_statement)
+
         self.register_prefix(TokenType.FUNC, self.parse_function_literal)
         self.register_infix(TokenType.LPAREN, self.parse_call_expression)
 
@@ -229,6 +231,11 @@ class Parser(object):
             else:
                 expression.alternative = self.parse_arrow_block()
         return expression
+
+    def parse_pass_statement(self):
+        statement = tree.PassStatement(self.current_token)
+        self.advance()
+        return statement
 
     def parse_function_literal(self):
         literal = tree.FunctionLiteral(self.current_token, None, None, None)
