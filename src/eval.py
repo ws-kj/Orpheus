@@ -34,10 +34,14 @@ def eval(node: tree.Node, env: Environment):
             return obj.ReturnValue(val)
         case tree.IfExpression:
             return eval_if_expression(node, env)
+        case tree.WhileStatement:
+            eval_while_statement(node, env)
         case tree.VarStatement:
             val = eval(node.value, env)
             if(is_error(val)): return val
             env.set(node.name.value, val)
+        case tree.AssignmentStatement:
+            eval_assignment_statement(node, env)
         case tree.NumLiteral:
             return obj.Number(node.value)
         case tree.StringLiteral:
@@ -129,6 +133,15 @@ def eval_ident(node, env):
         return func
     return ErrorHandler.runtime_error(f'unknown identifier: {node.value}')
 
+def eval_assignment_statement(node, env):
+    current = env.get(node.name.value)
+    if current != None:
+        val = eval(node.value, env)
+        if is_error(val): return val
+        env.set(node.name.value, val)
+        return
+    return ErrorHandler.runtime_error(f'assignment to uninit var: {node.name.value}')
+
 def eval_prefix_expression(node, right, env):
     match node.token.type:
         case TokenType.NOT:
@@ -205,6 +218,16 @@ def eval_if_expression(node, env):
         return eval(node.alternative, env)
     else:
         return None
+
+def eval_while_statement(node, env):
+    cond = eval(node.condition, env)
+    if(is_error(cond)): return cond
+    if cond.type() != obj.ObjectType.BOOL:
+        return ErrorHandler.runtime_error(f'expected boolean for while condition')
+    while(cond.value == True):
+        eval(node.body, env)
+        cond = eval(node.condition, env)
+        if(is_error(cond)): return cond
 
 def is_truthy(obj):
     if(obj == NIL or obj == FALSE):

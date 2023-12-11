@@ -140,6 +140,17 @@ class IfExpression(Expression):
     def token_literal(self):
         return self.token.literal
 
+@dataclass
+class WhileStatement(Statement):
+    token: Token
+    condition: Expression
+    body: BlockStatement
+
+    def statement_node(self):
+        pass
+    def token_literal(self):
+        return self.token.literal
+
 @dataclass 
 class ExpressionStatement(Statement):
     token: Token
@@ -162,7 +173,19 @@ class VarStatement(Statement):
 
     def token_literal(self):
         return self.token.literal
-       
+      
+@dataclass
+class AssignmentStatement(Statement):
+    token: Token
+    name:  Identifier
+    value: Expression
+
+    def statement_node(self):
+        pass
+
+    def token_literal(self):
+        return self.token.literal
+
 @dataclass 
 class PassStatement(Statement):
     token: Token

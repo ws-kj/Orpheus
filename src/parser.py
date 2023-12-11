@@ -58,9 +58,10 @@ class Parser(object):
 
         self.register_prefix(TokenType.LPAREN, self.parse_grouped_expression)
         self.register_prefix(TokenType.ARROW, self.parse_block_statement)
-        self.register_prefix(TokenType.IF, self.parse_if_expression)
 
+        self.register_prefix(TokenType.IF, self.parse_if_expression)
         self.register_prefix(TokenType.PASS, self.parse_pass_statement)
+        self.register_prefix(TokenType.WHILE, self.parse_while_statement)
 
         self.register_prefix(TokenType.FUNC, self.parse_function_literal)
         self.register_infix(TokenType.LPAREN, self.parse_call_expression)
@@ -163,6 +164,13 @@ class Parser(object):
         return left_exp
 
     def parse_identifier(self):
+        if(self.peek_token_is(TokenType.EQUAL)):
+            statement = tree.AssignmentStatement(self.current_token, None, None)
+            statement.name = tree.Identifier(self.current_token, self.current_token.literal)
+            self.advance()
+            self.advance()
+            statement.value = self.parse_expression(PrecLevel.LOWEST)
+            return statement
         return tree.Identifier(self.current_token, self.current_token.literal)
 
     def parse_number(self):
@@ -235,6 +243,15 @@ class Parser(object):
     def parse_pass_statement(self):
         statement = tree.PassStatement(self.current_token)
         self.advance()
+        return statement
+
+    def parse_while_statement(self):
+        statement = tree.WhileStatement(self.current_token, None, None)
+        self.advance()
+        statement.condition = self.parse_expression(PrecLevel.LOWEST)
+        if not issubclass(type(statement.condition), tree.Expression):
+            return ErrorHandler.error(self.current_token.line, "expected expression")
+        statement.body = self.parse_arrow_block()
         return statement
 
     def parse_function_literal(self):

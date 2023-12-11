@@ -44,6 +44,9 @@ class Orpheus(object):
 
         program = parser.parse_program()
 
+        if ErrorHandler.had_error:
+            return
+
         debug = False
 
         if(debug):
