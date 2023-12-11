@@ -64,8 +64,8 @@ class Parser(object):
         self.register_prefix(TokenType.WHILE, self.parse_while_statement)
 
         self.register_prefix(TokenType.FUNC, self.parse_function_literal)
+        
         self.register_infix(TokenType.LPAREN, self.parse_call_expression)
-
         self.register_infix(TokenType.EQUAL_EQUAL, self.parse_infix_expression)
         self.register_infix(TokenType.BANG_EQUAL, self.parse_infix_expression)
         self.register_infix(TokenType.LESS, self.parse_infix_expression)
@@ -231,7 +231,16 @@ class Parser(object):
         self.advance()
         expression.condition = self.parse_expression(PrecLevel.LOWEST)
         expression.consequence = self.parse_arrow_block()
-        if(self.peek_token_is(TokenType.ELSE)):
+        if self.peek_token_is(TokenType.ELSE):
+            self.advance()
+            if(self.peek_token_is(TokenType.IF)):
+                self.advance()
+                expression.alternative = self.parse_if_expression()
+            else:
+                expression.alternative = self.parse_arrow_block()
+        elif self.peek_token_is(TokenType.NEWLINE) and self.double_peek_is(TokenType.ELSE):
+            print("E")
+            self.advance()
             self.advance()
             if(self.peek_token_is(TokenType.IF)):
                 self.advance()
@@ -367,6 +376,12 @@ class Parser(object):
 
     def peek_token_is(self, token_type):
         return self.peek_token.type == token_type
+
+    def double_peek_is(self, token_type):
+        n = self.t_idx+2
+        if n <= len(self.tokens):
+            return self.tokens[n].type == token_type
+        return False
 
     def expect_peek(self, token_type):
         if(self.peek_token_is(token_type)):

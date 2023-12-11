@@ -4,25 +4,15 @@ println("!")
 
 func fizzbuzz(n)
 ->
-    func step(numb, goal)
+    var x = 1
+
+    while x <= n
     ->
-        var nu = numb + 1
-        if nu <= goal
-        ->
-
-            if nu % 3 -> print("Fizz")
-            if nu % 5 -> print("Buzz")
-
-            if not nu % 3 
-            ->
-                if not nu % 5
-                ->
-                    print(nu)
-
-            print()
-
-            step(nu, goal)
-
-    step(0)
+        if x % 3 == 0 and x % 5 == 0 -> println("FizzBuzz")
+        else if x % 3 == 0 -> println("Fizz")
+        else if x % 5 == 0 -> println("Buzz")
+        else -> println(x)
+        
+        x = x + 1
 
 fizzbuzz(20)
