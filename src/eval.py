@@ -10,7 +10,7 @@ TRUE = obj.Bool(True)
 NIL = obj.Nil()
 
 
-def eval(node: tree.Node, env: Environment):
+def eval(node, env):
     match type(node):
         case tree.Program:
             return eval_program(node.statements, env)
@@ -61,7 +61,18 @@ def eval(node: tree.Node, env: Environment):
             args = eval_expressions(node.args, env)
             if(len(args) == 1 and is_error(args[0])): 
                 return args[0]
-            return apply_function(func, args)  
+            return apply_function(func, args) 
+        case tree.ArrayLiteral:
+            elements = eval_expressions(node.elements, env)
+            if len(elements) == 1 and is_error(elements[0]):
+                return elements[0]
+            return obj.Array(elements)
+        case tree.IndexExpression:
+            left = eval(node.left, env)
+            if is_error(left): return left
+            index = eval(node.index, env)
+            if is_error(index): return index
+            return eval_index_expression(left, index)
         case _:
             return None
 
@@ -150,6 +161,19 @@ def eval_prefix_expression(node, right, env):
             return eval_minus_prefix_expression(right, env)
         case _:
             return ErrorHandler.runtime_error(f'unknown operator:  {str(node.token.literal)} {right.type()}')
+
+def eval_index_expression(left, index):
+    if left.type() == obj.ObjectType.ARRAY and index.type() == obj.ObjectType.NUMBER:
+        return eval_array_index_expression(left, index)
+    else:
+        return ErrorHandler.runtime_error(f'index operator not supported: {left.token.literal}')
+
+def eval_array_index_expression(array, index):
+    idx = int(index.value)
+    max = len(array.elements) - 1
+    if idx < 0 or idx > max: return None
+
+    return array.elements[idx]
 
 def eval_infix_expression(node, left, right, env):
     left_val = left.value

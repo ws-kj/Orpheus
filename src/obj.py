@@ -15,14 +15,10 @@ class ObjectType(Enum):
     ERROR = auto()
     FUNCTION = auto()
     BUILTIN = auto()
+    ARRAY = auto()
 
 class Object(ABC):
-    @abstractmethod 
-    def type(self):
-        pass
-    @abstractmethod 
-    def inspect(self):
-        pass
+    pass
 
 @dataclass
 class Number(Object):
@@ -97,3 +93,18 @@ class Function(Object):
         return f'func {self.name.value}'
     def type(self):
         return ObjectType.FUNCTION
+
+@dataclass
+class Array(Object):
+    elements: list[Object]
+
+    def inspect(self):
+        ret = "["
+        for i in range(0, len(self.elements)):
+            ret += self.elements[i].inspect()
+            if i != len(self.elements)-1:
+                ret += ", "
+        ret += "]"
+        return ret
+    def type(self):
+        return ObjectType.ARRAY

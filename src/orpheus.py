@@ -33,9 +33,6 @@ class Orpheus(object):
 
     def run(self, source: str, parser=None):
         tokens = Scanner(source).scan_tokens()
-        for tok in tokens:
-            #print(tok)
-            pass
 
         if(parser==None):
             parser = Parser(tokens)

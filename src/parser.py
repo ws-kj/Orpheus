@@ -13,6 +13,7 @@ class PrecLevel(IntEnum):
     PRODUCT = auto()
     PREFIX = auto()
     CALL = auto()
+    INDEX = auto()
 
 class Parser(object):
 
@@ -30,7 +31,8 @@ class Parser(object):
         TokenType.SLASH: PrecLevel.PRODUCT,
         TokenType.STAR: PrecLevel.PRODUCT,
         TokenType.PERCENT: PrecLevel.PRODUCT,
-        TokenType.LPAREN: PrecLevel.CALL
+        TokenType.LPAREN: PrecLevel.CALL,
+        TokenType.LBRACKET: PrecLevel.INDEX
     }
 
     def __init__(self, tokens=None):
@@ -57,6 +59,7 @@ class Parser(object):
         self.register_prefix(TokenType.FALSE, self.parse_boolean)
 
         self.register_prefix(TokenType.LPAREN, self.parse_grouped_expression)
+        self.register_prefix(TokenType.LBRACKET, self.parse_array_literal)
         self.register_prefix(TokenType.ARROW, self.parse_block_statement)
 
         self.register_prefix(TokenType.IF, self.parse_if_expression)
@@ -64,7 +67,8 @@ class Parser(object):
         self.register_prefix(TokenType.WHILE, self.parse_while_statement)
 
         self.register_prefix(TokenType.FUNC, self.parse_function_literal)
-        
+    
+        self.register_infix(TokenType.LBRACKET, self.parse_index_expression)
         self.register_infix(TokenType.LPAREN, self.parse_call_expression)
         self.register_infix(TokenType.EQUAL_EQUAL, self.parse_infix_expression)
         self.register_infix(TokenType.BANG_EQUAL, self.parse_infix_expression)
@@ -201,6 +205,41 @@ class Parser(object):
 
         return exp
 
+    def parse_array_literal(self):
+        array = tree.ArrayLiteral(self.current_token)
+        array.elements = self.parse_expression_list(TokenType.RBRACKET)
+        return array
+
+    def parse_expression_list(self, end):
+        list = []
+
+        if self.peek_token_is(end):
+            self.advance()
+            return list
+        
+        self.advance()
+        list.append(self.parse_expression(PrecLevel.LOWEST))
+
+        while self.peek_token_is(TokenType.COMMA):
+            self.advance()
+            self.advance()
+            list.append(self.parse_expression(PrecLevel.LOWEST))
+
+        if not self.expect_peek(end):
+            return None
+
+        return list
+
+    def parse_index_expression(self, left):
+        exp = tree.IndexExpression(self.current_token, left)
+        self.advance()
+        exp.index = self.parse_expression(PrecLevel.LOWEST)
+
+        if not self.expect_peek(TokenType.RBRACKET):
+            return None 
+
+        return exp
+
     def parse_arrow_block(self):
         if(self.peek_token_is(TokenType.ARROW)):
             self.advance()
@@ -290,7 +329,7 @@ class Parser(object):
 
     def parse_call_expression(self, function):
         exp = tree.CallExpression(self.current_token, function, None)
-        exp.args = self.parse_call_arguments()
+        exp.args = self.parse_expression_list(TokenType.RPAREN)
         return exp
 
     def parse_call_arguments(self):

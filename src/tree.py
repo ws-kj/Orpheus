@@ -95,6 +95,11 @@ class ExpressionStatement(Statement):
     token: Token
     expression: Expression | None = None
 
+@dataclass 
+class ArrayLiteral(Expression):
+    token: Token
+    elements: list[Expression] | None = None
+
 @dataclass
 class VarStatement(Statement):
     token: Token
@@ -106,6 +111,12 @@ class AssignmentStatement(Statement):
     token: Token
     name:  Identifier | None = None
     value: Expression | None = None
+
+@dataclass 
+class IndexExpression(Expression):
+    token: Token
+    left: Expression | None = None
+    right: Expression | None = None 
 
 @dataclass
 class PassStatement(Statement):
