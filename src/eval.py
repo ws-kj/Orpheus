@@ -149,7 +149,7 @@ def eval_prefix_expression(node, right, env):
         case TokenType.MINUS:
             return eval_minus_prefix_expression(right, env)
         case _:
-            return ErrorHandler.runtime_error(f'unknown operator:  {str(token.literal)} {right.type()}')
+            return ErrorHandler.runtime_error(f'unknown operator:  {str(node.token.literal)} {right.type()}')
 
 def eval_infix_expression(node, left, right, env):
     left_val = left.value

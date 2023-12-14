@@ -1,231 +1,127 @@
 from abc import ABC, abstractmethod 
-from dataclasses import dataclass
+from dataclasses import dataclass 
 
-from tokentype import TokenType
-from tokens import Token
+from tokens import Token 
 
 class Node(ABC):
-    @abstractmethod 
+    token: Token 
+
     def token_literal(self):
-        pass
+        return self.token.literal 
 
 class Statement(Node):
-    @abstractmethod 
-    def statement_node(self):
-        pass
+    pass 
 
-class Expression(Node): 
-    @abstractmethod 
-    def expression_node(self):
-        pass
-
+class Expression(Node):  
+    pass 
 
 class Program(Node):
     def __init__(self):
-        self.statements = []
+        self.statements = [] 
 
     def token_literal(self):
         if(len(self.statements) > 0):
-            return self.statements[0].token_literal()
+            return self.statements[0].token_literal() 
         else:
-            return ""
+            return "" 
 
 @dataclass
 class PrefixExpression(Expression):
     token: Token
-    operator: str
-    right: Expression
+    operator: str | None = None
+    right: Expression | None = None
 
-    def expression_node(self):
-        pass
-    def token_literal(self):
-        return self.token.literal
 
-@dataclass 
+@dataclass
 class InfixExpression(Expression):
     token: Token
-    left: Expression
-    operator: str
-    right: Expression
-
-    def expression_node(self):
-        pass
-    def token_literal(self):
-        return self.token.literal
+    left: Expression | None = None
+    operator: str | None = None
+    right: Expression | None = None
 
 @dataclass
 class Identifier(Expression):
     token: Token
-    value: str
+    value: str | None = None
 
-    def expression_node(self):
-        pass
-    def token_literal(self):
-        return self.token.literal
-
-@dataclass 
+@dataclass
 class NumLiteral(Expression):
     token: Token
-    value: float
+    value: float | None = None
 
-    def expression_node(self):
-        pass
-    def token_literal(self):
-        return self.token.literal
-
-
-@dataclass 
+@dataclass
 class StringLiteral(Expression):
     token: Token
-    value: str
+    value: str | None = None
 
-    def expression_node(self):
-        pass
-    def token_literal(self):
-        return self.token.literal
-
-@dataclass 
+@dataclass
 class Boolean(Expression):
     token: Token
-    value: bool
+    value: bool | None = None
 
-    def expression_node(self):
-        pass
-    def token_literal(self):
-        return self.token.literal
-
-@dataclass 
+@dataclass
 class BlockStatement(Statement):
     token: Token
-    statements: list[Statement]
+    statements: list[Statement] | None = None
 
-    def statement_node(self):
-        pass
-
-    def token_literal(self):
-        return self.token.literal
-
-@dataclass 
+@dataclass
 class FunctionLiteral(Expression):
     token: Token
-    name: Identifier
-    params: list[Identifier]
-    body: BlockStatement
-    
-    def expression_node(self):
-        pass
-    def token_literal(self):
-        return self.token.literal
+    name: Identifier | None = None
+    params: list[Identifier] | None = None
+    body: BlockStatement | None = None
 
 @dataclass
 class CallExpression(Expression):
     token: Token
-    function: Identifier
-    args: list[Expression]
+    function: Identifier | None = None
+    args: list[Expression] | None = None
 
-    def expression_node(self):
-        pass
-    def token_literal(self):
-        return self.token.literal
-
-@dataclass 
+@dataclass
 class IfExpression(Expression):
     token: Token
-    condition: Expression
-    consequence: BlockStatement
-    alternative: BlockStatement
-    
-    def expression_node(self):
-        pass
-    def token_literal(self):
-        return self.token.literal
-
+    condition: Expression | None = None 
+    consequence: BlockStatement | None = None 
+    alternative: BlockStatement | None = None 
+  
 @dataclass
 class WhileStatement(Statement):
     token: Token
-    condition: Expression
-    body: BlockStatement
+    condition: Expression | None = None
+    body: BlockStatement | None = None
 
-    def statement_node(self):
-        pass
-    def token_literal(self):
-        return self.token.literal
-
-@dataclass 
+@dataclass
 class ExpressionStatement(Statement):
     token: Token
-    expression: Expression
-
-    def statement_node(self):
-        pass
-
-    def token_literal(self):
-        return self.token.literal
+    expression: Expression | None = None
 
 @dataclass
 class VarStatement(Statement):
     token: Token
-    name:  Identifier
-    value: Expression
+    name:  Identifier | None = None
+    value: Expression | None = None
 
-    def statement_node(self):
-        pass
-
-    def token_literal(self):
-        return self.token.literal
-      
 @dataclass
 class AssignmentStatement(Statement):
     token: Token
-    name:  Identifier
-    value: Expression
+    name:  Identifier | None = None
+    value: Expression | None = None
 
-    def statement_node(self):
-        pass
-
-    def token_literal(self):
-        return self.token.literal
-
-@dataclass 
+@dataclass
 class PassStatement(Statement):
-    token: Token
-    
-    def statement_node(self):
-        pass
+    pass
 
-    def token_literal(self):
-        return self.token.literal
-
-@dataclass 
+@dataclass
 class ReturnStatement(Statement):
     token: Token
-    return_value: Expression
+    return_value: Expression | None = None
 
-    def statement_node(self):
-        pass
-
-    def token_literal(self):
-        return self.token.literal
-
-@dataclass 
+@dataclass
 class ModelStatement(Statement):
     token: Token
-    name: Identifier
+    name: Identifier | None = None
 
-    def statement_node(self):
-        pass
-
-    def token_literal(self):
-        return self.token.literal
-
-
-@dataclass 
+@dataclass
 class SpawnStatement(Statement):
     token: Token
-    name: Identifier
-
-    def statement_node(self):
-        pass
-
-    def token_literal(self):
-        return self.token.literal
+    name: Identifier | None = None

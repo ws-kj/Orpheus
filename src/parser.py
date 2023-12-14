@@ -87,8 +87,8 @@ class Parser(object):
         self.tokens = tokens
 
         self.t_idx = 0
-        self.current_token = self.tokens[0]
-        self.peek_token = self.tokens[1]
+        self.current_token: Token = self.tokens[0]
+        self.peek_token: Token = self.tokens[1] 
 
     def register_prefix(self, token_type, fn):
         self.prefix_fns[token_type] = fn
@@ -181,7 +181,7 @@ class Parser(object):
             literal.value = value
             return literal
         except ValueError:
-            ErrorManager.error(
+            ErrorHandler.error(
                 self.current_token.line, f'Could not parse integer literal from {literal}')
             return None
      
@@ -239,7 +239,6 @@ class Parser(object):
             else:
                 expression.alternative = self.parse_arrow_block()
         elif self.peek_token_is(TokenType.NEWLINE) and self.double_peek_is(TokenType.ELSE):
-            print("E")
             self.advance()
             self.advance()
             if(self.peek_token_is(TokenType.IF)):
