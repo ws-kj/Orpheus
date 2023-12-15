@@ -171,7 +171,8 @@ def eval_index_expression(left, index):
 def eval_array_index_expression(array, index):
     idx = int(index.value)
     max = len(array.elements) - 1
-    if idx < 0 or idx > max: return None
+    if idx < 0 or idx > max: 
+        return ErrorHandler.runtime_error(f'index `{idx}` out of range')
 
     return array.elements[idx]
 
