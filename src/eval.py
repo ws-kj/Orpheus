@@ -73,6 +73,8 @@ def eval(node, env):
             index = eval(node.index, env)
             if is_error(index): return index
             return eval_index_expression(left, index)
+        case tree.IndexAssignment:
+            return eval_index_assignment(node, env)
         case _:
             return None
 
@@ -151,7 +153,24 @@ def eval_assignment_statement(node, env):
         if is_error(val): return val
         env.set(node.name.value, val)
         return
-    return ErrorHandler.runtime_error(f'assignment to uninit var: {node.name.value}')
+    return ErrorHandler.runtime_error(f'unknown variable: {node.name.value}')
+
+def eval_index_assignment(node, env):
+    current = env.get(node.name.value)
+    if current != None:
+        idx_obj = eval(node.index, env)
+        if is_error(idx_obj): return idx_obj
+        val = eval(node.value, env)
+        if is_error(val): return val
+
+        idx = int(idx_obj.value)
+        elements = current.elements
+        if idx < 0 or idx > len(elements)-1:
+            return ErrorHandler.runtime_error(f'index `{idx}` out of range')
+        elements[idx] = val
+        env.set(node.name.value, obj.Array(elements))
+        return
+    return ErrorHandler.runtime_error(f'unknown variable: {node.name.value}')
 
 def eval_prefix_expression(node, right, env):
     match node.token.type:

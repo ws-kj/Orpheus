@@ -116,7 +116,14 @@ class AssignmentStatement(Statement):
 class IndexExpression(Expression):
     token: Token
     left: Expression | None = None
-    right: Expression | None = None 
+    index: Expression | None = None 
+
+@dataclass
+class IndexAssignment(Statement):
+    token: Token
+    name: Identifier | None = None
+    index: Expression | None = None
+    value: Expression | None = None
 
 @dataclass
 class PassStatement(Statement):

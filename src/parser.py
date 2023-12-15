@@ -231,12 +231,25 @@ class Parser(object):
         return list
 
     def parse_index_expression(self, left):
+        name = None
+        if type(left) == tree.Identifier:
+            name = left
+
         exp = tree.IndexExpression(self.current_token, left)
         self.advance()
         exp.index = self.parse_expression(PrecLevel.LOWEST)
 
         if not self.expect_peek(TokenType.RBRACKET):
             return None 
+
+        if self.peek_token_is(TokenType.EQUAL):
+            if name == None:
+                return 
+            self.advance()
+            self.advance()
+            value = self.parse_expression(PrecLevel.LOWEST)
+            stmt = tree.IndexAssignment(exp.token, name, exp.index, value)
+            return stmt
 
         return exp
 
