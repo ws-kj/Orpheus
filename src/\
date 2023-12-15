@@ -55,25 +55,15 @@ def bf_tail(args):
         return ErrorHandler.runtime_error(f'tail: argument must be array')
 
     array = args[0]
-    if len(array.elements) > 1:
+    if len(arr.elements) > 1:
         new = array.elements[1:]
         return obj.Array(new)
     return obj.Nil()
-
-def bf_append(args):
-    if len(args) != 2:
-        return ErrorHandler.runtime_error(f'append: expected 2 arguments, got {len(args)}')
-    if args[0].type() != obj.ObjectType.ARRAY:
-        return ErrorHandler.runtime_error(f'append: first argument must be array')
-    array = args[0].elements
-    array.append(args[1])
-    return obj.Array(array)
 
 builtins = {
     "len": obj.Builtin(bf_len),
     "print": obj.Builtin(bf_print),
     "println": obj.Builtin(bf_println),
-    "tail": obj.Builtin(bf_tail),
-    "append": obj.Builtin(bf_append)
+    "tail": obj.Builtin(bf_tail)
 }
 

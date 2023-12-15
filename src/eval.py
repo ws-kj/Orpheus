@@ -41,7 +41,8 @@ def eval(node, env):
             if(is_error(val)): return val
             env.set(node.name.value, val)
         case tree.AssignmentStatement:
-            eval_assignment_statement(node, env)
+            res = eval_assignment_statement(node, env)
+            if is_error(res): return res
         case tree.NumLiteral:
             return obj.Number(node.value)
         case tree.StringLiteral:
@@ -150,7 +151,8 @@ def eval_assignment_statement(node, env):
     current = env.get(node.name.value)
     if current != None:
         val = eval(node.value, env)
-        if is_error(val): return val
+        if is_error(val): 
+            return val
         env.set(node.name.value, val)
         return
     return ErrorHandler.runtime_error(f'unknown variable: {node.name.value}')
