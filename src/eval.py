@@ -165,6 +165,8 @@ def eval_index_assignment(node, env):
         val = eval(node.value, env)
         if is_error(val): return val
 
+        if idx_obj.value % 1 != 0:
+            return ErrorHandler.runtime_error(f'index must be integer')
         idx = int(idx_obj.value)
         elements = current.elements
         if idx < 0 or idx > len(elements)-1:
@@ -190,6 +192,8 @@ def eval_index_expression(left, index):
         return ErrorHandler.runtime_error(f'index operator not supported: {left.token.literal}')
 
 def eval_array_index_expression(array, index):
+    if index.value % 1 != 0:
+        return ErrorHandler.runtime_error(f'index must be integer')
     idx = int(index.value)
     max = len(array.elements) - 1
     if idx < 0 or idx > max: 
