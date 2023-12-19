@@ -188,10 +188,25 @@ def eval_prefix_expression(node, right, env):
             return ErrorHandler.runtime_error(f'unknown operator:  {str(node.token.literal)} {right.type()}')
 
 def eval_index_expression(left, index):
-    if left.type() == obj.ObjectType.ARRAY and index.type() == obj.ObjectType.NUMBER:
-        return eval_array_index_expression(left, index)
-    else:
-        return ErrorHandler.runtime_error(f'index operator not supported: {left.token.literal}')
+    match left.type():
+        case obj.ObjectType.ARRAY:
+            if index.type() == obj.ObjectType.NUMBER:
+                return eval_array_index_expression(left, index)
+        case obj.ObjectType.MAP:
+            return eval_map_index_expression(left, index)
+        case _:
+            pass
+    return ErrorHandler.runtime_error(f'index operator not supported: {left.token.literal}')
+
+def eval_map_index_expression(map, index):
+    if not index.type() in obj.hashable:
+        return ErrorHandler.runtime_error(f'unusable as hash key: {index.type()}')
+
+    key = obj.hash_obj(index)
+    if key not in map.pairs.keys():
+        return ErrorHandler.runtime_error(f'no value for key: {index.inspect()}')
+
+    return map.pairs[key].value
 
 def eval_array_index_expression(array, index):
     if index.value % 1 != 0:

@@ -1,1 +1,1 @@
-{0: "zero", true: 2, true: "two"}
+{0: "zero", 1: 2, 2: "two"}[true]

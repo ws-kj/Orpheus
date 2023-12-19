@@ -217,6 +217,10 @@ class Parser(object):
             self.advance()
             key = self.parse_expression(PrecLevel.LOWEST)
 
+
+            if type(key) != tree.NumLiteral and type(key) != tree.StringLiteral:
+                return ErrorHandler.error(self.current_token.line, "invalid type for map key")
+
             if not self.expect_peek(TokenType.COLON):
                 return None
             

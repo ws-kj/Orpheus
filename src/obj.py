@@ -16,7 +16,9 @@ class ObjectType(Enum):
     FUNCTION = auto()
     BUILTIN = auto()
     ARRAY = auto()
-    HASH = auto()
+    MAP = auto()
+
+hashable = [ObjectType.NUMBER, ObjectType.STRING, ObjectType.BOOL]
 
 class Object(ABC):
     pass
@@ -56,7 +58,7 @@ class Map(Object):
         return ret
 
     def type(self):
-        return ObjectType.HASH
+        return ObjectType.MAP
 
 @dataclass
 class Number(Object):
