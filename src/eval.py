@@ -76,6 +76,8 @@ def eval(node, env):
             return eval_index_expression(left, index)
         case tree.IndexAssignment:
             return eval_index_assignment(node, env)
+        case tree.MapLiteral:
+            return eval_map_literal(node, env)
         case _:
             return None
 
@@ -200,6 +202,20 @@ def eval_array_index_expression(array, index):
         return ErrorHandler.runtime_error(f'index `{idx}` out of range')
 
     return array.elements[idx]
+
+def eval_map_literal(node, env):
+    pairs = {}
+    for key_node, value_node in node.pairs.items():
+        key = eval(key_node, env)
+        if is_error(key): return key
+
+        value = eval(value_node, env)
+        if is_error(value): return value
+
+        hashed = obj.hash_obj(key)
+        pairs[hashed] = obj.MapPair(key, value)
+
+    return obj.Map(pairs)
 
 def eval_infix_expression(node, left, right, env):
     left_val = left.value

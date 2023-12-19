@@ -16,9 +16,47 @@ class ObjectType(Enum):
     FUNCTION = auto()
     BUILTIN = auto()
     ARRAY = auto()
+    HASH = auto()
 
 class Object(ABC):
     pass
+
+@dataclass
+class HashKey:
+    type: ObjectType
+    value: int
+    
+    def __hash__(self):
+        return hash((self.type, self.value))
+
+def hash_obj(o):
+    return HashKey(o.type(), hash(o))
+
+@dataclass 
+class MapPair:
+    key: Object
+    value: Object
+
+
+@dataclass
+class Map(Object):
+    pairs: dict[HashKey, MapPair]
+
+    def inspect(self):
+        ret = "{"
+        l = len(self.pairs.values())
+        i = 0
+        for pair in self.pairs.values():
+            ret += pair.key.inspect()
+            ret += ": "
+            ret += pair.value.inspect()            
+            if i < l-1: ret += ", "
+            i += 1
+        ret += "}"
+        return ret
+
+    def type(self):
+        return ObjectType.HASH
 
 @dataclass
 class Number(Object):
@@ -28,6 +66,10 @@ class Number(Object):
         return str(self.value)
     def type(self):
         return ObjectType.NUMBER
+    
+    def __hash__(self):
+        return hash(self.value)
+
 
 @dataclass
 class String(Object):
@@ -37,15 +79,25 @@ class String(Object):
         return "\"" + self.value + "\""
     def type(self):
         return ObjectType.STRING
+    
+    def __hash__(self):
+        return hash(self.value)
+
 
 @dataclass
 class Bool(Object):
     value: bool
 
     def inspect(self):
-        return str(self.value)
+        if self.value:
+            return "true"
+        return "false"
+
     def type(self):
         return ObjectType.BOOL
+    
+    def __hash__(self):
+        return hash(self.value)
 
 @dataclass
 class Nil(Object):
@@ -54,6 +106,9 @@ class Nil(Object):
         return "nil"
     def type(self):
         return ObjectType.NIL
+    
+    def __hash__(self):
+        return hash(self.value)
 
 @dataclass
 class ReturnValue(Object):

@@ -60,12 +60,12 @@ class Parser(object):
 
         self.register_prefix(TokenType.LPAREN, self.parse_grouped_expression)
         self.register_prefix(TokenType.LBRACKET, self.parse_array_literal)
+        self.register_prefix(TokenType.LBRACE, self.parse_map_literal) 
         self.register_prefix(TokenType.ARROW, self.parse_block_statement)
 
         self.register_prefix(TokenType.IF, self.parse_if_expression)
         self.register_prefix(TokenType.PASS, self.parse_pass_statement)
         self.register_prefix(TokenType.WHILE, self.parse_while_statement)
-
         self.register_prefix(TokenType.FUNC, self.parse_function_literal)
     
         self.register_infix(TokenType.LBRACKET, self.parse_index_expression)
@@ -209,6 +209,26 @@ class Parser(object):
         array = tree.ArrayLiteral(self.current_token)
         array.elements = self.parse_expression_list(TokenType.RBRACKET)
         return array
+
+    def parse_map_literal(self): 
+        hash = tree.MapLiteral(self.current_token, {})
+
+        while(not self.peek_token_is(TokenType.RBRACE)):
+            self.advance()
+            key = self.parse_expression(PrecLevel.LOWEST)
+
+            if not self.expect_peek(TokenType.COLON):
+                return None
+            
+            self.advance()
+            value = self.parse_expression(PrecLevel.LOWEST)
+            hash.pairs[key] = value
+            if not self.peek_token_is(TokenType.RBRACE) and not self.expect_peek(TokenType.COMMA):
+                return None
+        if not self.expect_peek(TokenType.RBRACE):
+            return None
+
+        return hash
 
     def parse_expression_list(self, end):
         list = []

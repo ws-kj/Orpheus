@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod 
 from dataclasses import dataclass 
-
 from tokens import Token 
 
 class Node(ABC):
@@ -13,7 +12,7 @@ class Statement(Node):
     pass 
 
 class Expression(Node):  
-    pass 
+    pass
 
 class Program(Node):
     def __init__(self):
@@ -49,15 +48,29 @@ class NumLiteral(Expression):
     token: Token
     value: float | None = None
 
+    def __hash__(self):
+        return hash((self.token, self.value))
+
 @dataclass
 class StringLiteral(Expression):
     token: Token
     value: str | None = None
+    
+    def __hash__(self):
+        return hash((self.token, self.value))
+
+@dataclass 
+class MapLiteral(Expression):
+    token: Token
+    pairs: dict[Expression, Expression] 
 
 @dataclass
 class Boolean(Expression):
     token: Token
     value: bool | None = None
+
+    def __hash__(self):
+        return hash((self.token, self.value))
 
 @dataclass
 class BlockStatement(Statement):

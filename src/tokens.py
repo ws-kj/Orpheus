@@ -15,6 +15,9 @@ class Token:
 
         return res
 
+    def __hash__(self):
+        return hash((self.type, self.literal, self.line))
+
     def get_literal(self):
         return self.literal
 
