@@ -12,3 +12,13 @@ if b[0] == 1
         "c"]
     println(b)
 
+var map = {0: true, 1: false}
+println(map)
+map = {
+    0: "hello", 
+    1: {
+        0: "oh",
+        1: "my"
+    }
+}
+println(map)

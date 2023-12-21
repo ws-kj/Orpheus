@@ -224,9 +224,10 @@ class Parser(object):
         hash = tree.MapLiteral(self.current_token, {})
 
         while(not self.peek_token_is(TokenType.RBRACE)):
+            self.ignore_whitespace()
             self.advance()
             key = self.parse_expression(PrecLevel.LOWEST)
-
+            
 
             if type(key) != tree.NumLiteral and type(key) != tree.StringLiteral:
                 return ErrorHandler.error(self.current_token.line, "invalid type for map key")
@@ -234,11 +235,15 @@ class Parser(object):
             if not self.expect_peek(TokenType.COLON):
                 return None
             
+            self.ignore_whitespace()
             self.advance()
             value = self.parse_expression(PrecLevel.LOWEST)
             hash.pairs[key] = value
-            if not self.peek_token_is(TokenType.RBRACE) and not self.expect_peek(TokenType.COMMA):
-                return None
+            self.ignore_whitespace()
+            if not self.peek_token_is(TokenType.RBRACE):
+                if not self.expect_peek(TokenType.COMMA):
+                    return None
+
         if not self.expect_peek(TokenType.RBRACE):
             return None
 
@@ -483,9 +488,15 @@ class Parser(object):
         return False
 
     def ignore_whitespace(self):
-        while self.peek_token_is(TokenType.NEWLINE) or self.peek_token_is(TokenType.INDENT) or self.peek_token_is(TokenType.DEDENT): 
+        while(self.peek_is_whitespace()):
             self.advance()
+
+    def peek_is_whitespace(self):
+        return self.peek_token_is(TokenType.NEWLINE) or self.peek_token_is(TokenType.INDENT) or self.peek_token_is(TokenType.DEDENT)
     
+    def current_is_whitespace(self):
+        return self.current_token_is(TokenType.NEWLINE) or self.current_token_is(TokenType.INDENT) or self.current_token_is(TokenType.DEDENT) 
+
     def is_current_end(self):
         return self.current_token_is(TokenType.NEWLINE) or self.current_token_is(TokenType.EOF)
 
