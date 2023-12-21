@@ -135,7 +135,7 @@ class IndexExpression(Expression):
 class IndexAssignment(Statement):
     token: Token
     name: Identifier | None = None
-    index: Expression | None = None
+    index: list[Expression] | None = None
     value: Expression | None = None
 
 @dataclass

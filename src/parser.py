@@ -285,37 +285,9 @@ class Parser(object):
                 self.advance()
                 self.advance()
                 value = self.parse_expression(PrecLevel.LOWEST)
-                stmt = tree.IndexAssignment(exp.token, name, exp.index[0], value)
+                stmt = tree.IndexAssignment(exp.token, name, exp.index, value)
                 return stmt
         return exp
-#        if not self.expect_peek(TokenType.RBRACKET):
-#            return None 
-
-#        if self.peek_token_is(TokenType.EQUAL):
-#            match type(left):
-#                case tree.Identifier:
-#                    if not ismap:
-#                        name = left
-#                        self.advance()
-#                        self.advance()
-#                        value = self.parse_expression(PrecLevel.LOWEST)
-#                        stmt = tree.IndexAssignment(exp.token, name, exp.index, value)
-#                        return stmt
-#
-#                    name = left
-#                    print("Name: ", end = "")
-#                    print(name)
-#                    return None
-#                case tree.IndexExpression:
-#                    self.walk_back()
-#                    self.walk_back()
-#                    name = self.parse_index_expression(left.left, True)
-#                    print(back)
-#                    return None
-#                case _:
-#                    return None
-#
- #       return exp
 
     def parse_arrow_block(self):
         if(self.peek_token_is(TokenType.ARROW)):

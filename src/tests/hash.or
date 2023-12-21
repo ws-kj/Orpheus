@@ -1,12 +1,15 @@
 var people = [{"name": "bob", "age": 25}, {"name": "alice", "age": 30}]
 
-people[0]["name"]
 
+people[0]["age"] = 30
 
-var person = people[1]
-println(person["name"])
+println(people)
 
-var map = [[1,2,3],[1,2,3],[1,2,3]]
-println(map[0])
-println(map[1+1][0])
-#map[0][0] = 1
+people[1]["name"] = "bob2"
+people[0] = 3
+people
+
+var map = [[1,2,3], [1,2,3], [1,2,3]]
+map[0][0] = "wow!"
+
+println(map)

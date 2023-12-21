@@ -164,31 +164,47 @@ def eval_assignment_statement(node, env):
 
 def eval_index_assignment(node, env):
     current = env.get(node.name.value)
-    if current != None:
-        idx_obj = eval(node.index, env)
+    old = current
+    if current == None:
+        return ErrorHandler.runtime_error(f'unknown variable: {node.name.value}')
+
+    val = eval(node.value, env)
+    if is_error(val): return val
+    
+    idx_vals = []
+    c = 0
+    final = False
+    for index in node.index:
+        if c == len(node.index)-1:
+            final = True
+        idx_obj = eval(index, env)
         if is_error(idx_obj): return idx_obj
-        val = eval(node.value, env)
-        if is_error(val): return val
-
-        if idx_obj.value % 1 != 0:
-            return ErrorHandler.runtime_error(f'index must be integer')
-        idx = int(idx_obj.value)
-        elements = current.elements
-        if idx < 0 or idx > len(elements)-1:
-            return ErrorHandler.runtime_error(f'index `{idx}` out of range')
-        elements[idx] = val
-        env.set(node.name.value, obj.Array(elements))
-        return
-    return ErrorHandler.runtime_error(f'unknown variable: {node.name.value}')
-
-def eval_prefix_expression(node, right, env):
-    match node.token.type:
-        case TokenType.NOT:
-            return bool_obj(eval_not_expression(right, env))
-        case TokenType.MINUS:
-            return eval_minus_prefix_expression(right, env)
-        case _:
-            return ErrorHandler.runtime_error(f'unknown operator:  {str(node.token.literal)} {right.type()}')
+        match current.type():
+            case obj.ObjectType.ARRAY:
+                if idx_obj.type() != obj.ObjectType.NUMBER:
+                    return ErrorHandler.runtime_error(f'invalid index type {idx_obj.type()}')
+                if idx_obj.value % 1 != 0:
+                    return ErrorHandler.runtime_error(f'index must be integer')
+                idx = int(idx_obj.value)
+                elements = current.elements
+                if idx < 0 or idx > len(elements)-1:
+                    return ErrorHandler.runtime_error(f'index `{idx}` out of range')
+                idx_vals.append(idx)
+                if final:
+                    current.elements[idx] = val
+                else:
+                    current = current.elements[idx]
+            case obj.ObjectType.MAP:
+                key = idx_obj
+                hashed = obj.hash_obj(key)
+                idx_vals.append((hashed, key))
+                if final:
+                    current.pairs[hashed] = obj.MapPair(key, val)
+                else:
+                    current = current.pairs[hashed].value
+            case _:
+                return ErrorHandler.runtime_error(f'invalid index on {current.type()}')
+        c += 1
 
 def eval_index_expression(left, indices):
     ref = left
@@ -216,6 +232,16 @@ def eval_index_expression(left, indices):
             case _:
                 return ErrorHandler.runtime_error(f'invalid index on {ref.type()}')
     return ref
+
+
+def eval_prefix_expression(node, right, env):
+    match node.token.type:
+        case TokenType.NOT:
+            return bool_obj(eval_not_expression(right, env))
+        case TokenType.MINUS:
+            return eval_minus_prefix_expression(right, env)
+        case _:
+            return ErrorHandler.runtime_error(f'unknown operator:  {str(node.token.literal)} {right.type()}')
 
 def eval_map_literal(node, env):
     pairs = {}
