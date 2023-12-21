@@ -1,0 +1,14 @@
+
+var b = [1, 2, 3]
+
+println(b)
+
+if b[0] == 1
+->
+    var c = 4 * b[2]
+    println(c)
+    b = ["a", 
+        "b", 
+        "c"]
+    println(b)
+

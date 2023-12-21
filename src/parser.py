@@ -247,6 +247,8 @@ class Parser(object):
     def parse_expression_list(self, end):
         list = []
 
+        self.ignore_whitespace()
+
         if self.peek_token_is(end):
             self.advance()
             return list
@@ -256,8 +258,10 @@ class Parser(object):
 
         while self.peek_token_is(TokenType.COMMA):
             self.advance()
+            self.ignore_whitespace()
             self.advance()
             list.append(self.parse_expression(PrecLevel.LOWEST))
+            self.ignore_whitespace()
 
         if not self.expect_peek(end):
             return None
@@ -478,6 +482,10 @@ class Parser(object):
             self.peek_token.line, f'Expected {token_type}, got {self.peek_token.type}') 
         return False
 
+    def ignore_whitespace(self):
+        while self.peek_token_is(TokenType.NEWLINE) or self.peek_token_is(TokenType.INDENT) or self.peek_token_is(TokenType.DEDENT): 
+            self.advance()
+    
     def is_current_end(self):
         return self.current_token_is(TokenType.NEWLINE) or self.current_token_is(TokenType.EOF)
 
