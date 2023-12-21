@@ -71,9 +71,12 @@ def eval(node, env):
         case tree.IndexExpression:
             left = eval(node.left, env)
             if is_error(left): return left
-            index = eval(node.index, env)
-            if is_error(index): return index
-            return eval_index_expression(left, index)
+            indices = []
+            for i in node.index:
+                index = eval(i, env)
+                if is_error(index): return index
+                indices.append(index)
+            return eval_index_expression(left, indices)
         case tree.IndexAssignment:
             return eval_index_assignment(node, env)
         case tree.MapLiteral:
@@ -187,36 +190,32 @@ def eval_prefix_expression(node, right, env):
         case _:
             return ErrorHandler.runtime_error(f'unknown operator:  {str(node.token.literal)} {right.type()}')
 
-def eval_index_expression(left, index):
-    match left.type():
-        case obj.ObjectType.ARRAY:
-            if index.type() == obj.ObjectType.NUMBER:
-                return eval_array_index_expression(left, index)
-        case obj.ObjectType.MAP:
-            return eval_map_index_expression(left, index)
-        case _:
-            pass
-    return ErrorHandler.runtime_error(f'index operator not supported: {left.token.literal}')
+def eval_index_expression(left, indices):
+    ref = left
+    for index in indices:
+        match ref.type():
+            case obj.ObjectType.ARRAY:
+                if index.type() != obj.ObjectType.NUMBER:
+                    return ErrorHandler.runtime_error(f'invalid index type {index.type()}')
+                if index.value % 1 != 0:
+                    return ErrorHandler.runtime_error(f'index must be integer')
+                idx = int(index.value) 
+                max = len(ref.elements) - 1
+                if idx < 0 or idx > max: 
+                    return ErrorHandler.runtime_error(f'index `{idx}` out of range')
+                ref = ref.elements[idx]
+            case obj.ObjectType.MAP:
+                if not index.type() in obj.hashable:
+                    return ErrorHandler.runtime_error(f'unusable as hash key: {index.type()}')
 
-def eval_map_index_expression(map, index):
-    if not index.type() in obj.hashable:
-        return ErrorHandler.runtime_error(f'unusable as hash key: {index.type()}')
+                key = obj.hash_obj(index)
+                if key not in ref.pairs.keys():
+                    return ErrorHandler.runtime_error(f'no value for key: {index.inspect()}')
 
-    key = obj.hash_obj(index)
-    if key not in map.pairs.keys():
-        return ErrorHandler.runtime_error(f'no value for key: {index.inspect()}')
-
-    return map.pairs[key].value
-
-def eval_array_index_expression(array, index):
-    if index.value % 1 != 0:
-        return ErrorHandler.runtime_error(f'index must be integer')
-    idx = int(index.value)
-    max = len(array.elements) - 1
-    if idx < 0 or idx > max: 
-        return ErrorHandler.runtime_error(f'index `{idx}` out of range')
-
-    return array.elements[idx]
+                ref = ref.pairs[key].value
+            case _:
+                return ErrorHandler.runtime_error(f'invalid index on {ref.type()}')
+    return ref
 
 def eval_map_literal(node, env):
     pairs = {}

@@ -1,1 +1,12 @@
-{0: "zero", 1: 2, 2: "two"}[true]
+var people = [{"name": "bob", "age": 25}, {"name": "alice", "age": 30}]
+
+people[0]["name"]
+
+
+var person = people[1]
+println(person["name"])
+
+var map = [[1,2,3],[1,2,3],[1,2,3]]
+println(map[0])
+println(map[1+1][0])
+#map[0][0] = 1

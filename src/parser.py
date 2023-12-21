@@ -110,6 +110,16 @@ class Parser(object):
         else:
             self.peek_token = self.tokens[self.t_idx+1]
 
+    def walk_back(self):
+        if self.t_idx < 1:
+            return
+        self.t_idx -= 1 
+        self.current_token = self.tokens[self.t_idx] 
+        if(self.t_idx >= len(self.tokens)-1):
+            self.peek_token = None
+        else:
+            self.peek_token = self.tokens[self.t_idx+1]
+
     def parse_program(self):
         if(not self.initialized):
             if(self.tokens != []):
@@ -254,28 +264,58 @@ class Parser(object):
 
         return list
 
-    def parse_index_expression(self, left):
-        name = None
-        if type(left) == tree.Identifier:
-            name = left
-
-        exp = tree.IndexExpression(self.current_token, left)
+    def parse_index_expression(self, left, ismap=False):
+        exp = tree.IndexExpression(self.current_token, left, None)
         self.advance()
-        exp.index = self.parse_expression(PrecLevel.LOWEST)
-
+        exp.index = [self.parse_expression(PrecLevel.LOWEST)]
         if not self.expect_peek(TokenType.RBRACKET):
-            return None 
+            return None
+#NEW GPT STUFF
+        while self.peek_token_is(TokenType.LBRACKET):
+            self.advance()
+            self.advance()
+            exp.index.append(self.parse_expression(PrecLevel.LOWEST))
+            #print(exp)
+            if not self.expect_peek(TokenType.RBRACKET):
+                return None
 
         if self.peek_token_is(TokenType.EQUAL):
-            if name == None:
-                return 
-            self.advance()
-            self.advance()
-            value = self.parse_expression(PrecLevel.LOWEST)
-            stmt = tree.IndexAssignment(exp.token, name, exp.index, value)
-            return stmt
-
+            if isinstance(left, tree.Identifier) and not ismap:
+                name = left
+                self.advance()
+                self.advance()
+                value = self.parse_expression(PrecLevel.LOWEST)
+                stmt = tree.IndexAssignment(exp.token, name, exp.index[0], value)
+                return stmt
         return exp
+#        if not self.expect_peek(TokenType.RBRACKET):
+#            return None 
+
+#        if self.peek_token_is(TokenType.EQUAL):
+#            match type(left):
+#                case tree.Identifier:
+#                    if not ismap:
+#                        name = left
+#                        self.advance()
+#                        self.advance()
+#                        value = self.parse_expression(PrecLevel.LOWEST)
+#                        stmt = tree.IndexAssignment(exp.token, name, exp.index, value)
+#                        return stmt
+#
+#                    name = left
+#                    print("Name: ", end = "")
+#                    print(name)
+#                    return None
+#                case tree.IndexExpression:
+#                    self.walk_back()
+#                    self.walk_back()
+#                    name = self.parse_index_expression(left.left, True)
+#                    print(back)
+#                    return None
+#                case _:
+#                    return None
+#
+ #       return exp
 
     def parse_arrow_block(self):
         if(self.peek_token_is(TokenType.ARROW)):

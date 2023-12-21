@@ -129,7 +129,7 @@ class AssignmentStatement(Statement):
 class IndexExpression(Expression):
     token: Token
     left: Expression | None = None
-    index: Expression | None = None 
+    index: list[Expression] | None = None 
 
 @dataclass
 class IndexAssignment(Statement):
