@@ -19,7 +19,8 @@ Development goals:
 
 --
 
-Currently capable of Fizzbuzz:
+Examples:
+
 ```
 func fizzbuzz(n)
 ->
@@ -35,6 +36,36 @@ func fizzbuzz(n)
         x = x + 1
 
 fizzbuzz(20)
+```
+
+```
+var people = [
+    { "name": "Bob", "age": 25 },
+    { "name": "Alice", "age": 17 },
+    { "name": "John", "age": 22 }
+]
+
+func greet(person)
+->    
+    print(person["name"])
+    print(" is ")
+    print(person["age"])
+    println(" years old.")
+
+
+var i = 0
+while i < len(people)
+->
+    greet(people[i])
+    if people[i]["age"] < 21
+    ->
+        println("Not eligible to drink!")
+    else 
+    ->
+        println("Eligible to drink.")
+    println()
+
+    i = i + 1
 ```
 
 :)
