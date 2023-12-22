@@ -43,8 +43,10 @@ def eval(node, env):
         case tree.AssignmentStatement:
             res = eval_assignment_statement(node, env)
             if is_error(res): return res
-        case tree.NumLiteral:
-            return obj.Number(node.value)
+        case tree.IntegerLiteral:
+            return obj.Integer(node.value)
+        case tree.FloatLiteral:
+            return obj.Float(node.value)
         case tree.StringLiteral:
             return obj.String(node.value)
         case tree.Boolean:
@@ -182,7 +184,7 @@ def eval_index_assignment(node, env):
         if is_error(idx_obj): return idx_obj
         match current.type():
             case obj.ObjectType.ARRAY:
-                if idx_obj.type() != obj.ObjectType.NUMBER:
+                if idx_obj.type() != obj.ObjectType.INTEGER:
                     return ErrorHandler.runtime_error(f'invalid index type {idx_obj.type()}')
                 if idx_obj.value % 1 != 0:
                     return ErrorHandler.runtime_error(f'index must be integer')
@@ -212,7 +214,7 @@ def eval_index_expression(left, indices):
     for index in indices:
         match ref.type():
             case obj.ObjectType.ARRAY:
-                if index.type() != obj.ObjectType.NUMBER:
+                if index.type() != obj.ObjectType.INTEGER:
                     return ErrorHandler.runtime_error(f'invalid index type {index.type()}')
                 if index.value % 1 != 0:
                     return ErrorHandler.runtime_error(f'index must be integer')
@@ -265,18 +267,18 @@ def eval_infix_expression(node, left, right, env):
         return ErrorHandler.runtime_error(f'type mismatch: {left.type()} {right.type()}')
 
     match left.type():
-        case obj.ObjectType.NUMBER:
+        case obj.ObjectType.INTEGER:
             match node.token.type:
                 case TokenType.PLUS:
-                    return obj.Number(left_val + right_val)
+                    return obj.Integer(left_val + right_val)
                 case TokenType.MINUS:
-                    return obj.Number(left_val - right_val)
+                    return obj.Integer(left_val - right_val)
                 case TokenType.STAR:
-                    return obj.Number(left_val * right_val)
+                    return obj.Integer(left_val * right_val)
                 case TokenType.SLASH:
-                    return obj.Number(left_val / right_val)
+                    return obj.Integer(left_val / right_val)
                 case TokenType.PERCENT:
-                    return obj.Number(left_val % right_val)
+                    return obj.Integer(left_val % right_val)
                 case TokenType.LESS:
                     return bool_obj(left_val < right_val)
                 case TokenType.GREATER:
@@ -312,9 +314,9 @@ def eval_not_expression(right, env):
     return not right.value # will eventually rewrite in C
 
 def eval_minus_prefix_expression(right, env):
-    if(right.type() != obj.ObjectType.NUMBER):
+    if(right.type() != obj.ObjectType.INTEGER):
         return ErrorHandler.runtime_error(f'unknown operator: {str(right.type())}')
-    return obj.Number(-right.value)
+    return obj.Integer(-right.value)
 
 def eval_if_expression(node, env):
     cond = eval(node.condition, env)

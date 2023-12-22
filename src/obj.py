@@ -7,7 +7,8 @@ from environment import Environment
 import tree 
 
 class ObjectType(Enum):
-    NUMBER = auto()
+    INTEGER = auto()
+    FLOAT = auto()
     STRING = auto()
     BOOL = auto()
     NIL = auto()
@@ -18,7 +19,7 @@ class ObjectType(Enum):
     ARRAY = auto()
     MAP = auto()
 
-hashable = [ObjectType.NUMBER, ObjectType.STRING, ObjectType.BOOL]
+hashable = [ObjectType.INTEGER, ObjectType.FLOAT, ObjectType.STRING, ObjectType.BOOL]
 
 class Object(ABC):
     pass
@@ -61,17 +62,28 @@ class Map(Object):
         return ObjectType.MAP
 
 @dataclass
-class Number(Object):
+class Float(Object):
     value: float
 
     def inspect(self):
         return str(self.value)
     def type(self):
-        return ObjectType.NUMBER
+        return ObjectType.FLOAT
     
     def __hash__(self):
         return hash(self.value)
 
+@dataclass
+class Integer(Object):
+    value: int
+
+    def inspect(self):
+        return str(self.value)
+    def type(self):
+        return ObjectType.INTEGER
+    
+    def __hash__(self):
+        return hash(self.value)
 
 @dataclass
 class String(Object):

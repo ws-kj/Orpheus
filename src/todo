@@ -1,3 +1,5 @@
-ignore newlines inside dict and array definitions
-eval/parse better errors (no None)
+num -> int and float
+c-style comments //
 types!
+pyeval
+ai

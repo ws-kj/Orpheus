@@ -10,8 +10,11 @@ class TokenType(Enum):
     # literals
     IDENTIFIER = auto()
     STRING = auto()
-    NUMBER = auto()
+    NUMBER = auto() #DEPREC
     INSTRUCT = auto()
+
+    INTEGER = auto()
+    FLOAT = auto()
 
     # single char tokens
     LPAREN = auto()

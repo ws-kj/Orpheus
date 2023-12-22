@@ -50,7 +50,10 @@ class Parser(object):
 
     def register_all(self):
         self.register_prefix(TokenType.IDENTIFIER, self.parse_identifier)
-        self.register_prefix(TokenType.NUMBER, self.parse_number)
+
+        self.register_prefix(TokenType.INTEGER, self.parse_integer)
+        self.register_prefix(TokenType.FLOAT, self.parse_float)
+
         self.register_prefix(TokenType.STRING, self.parse_string_literal) 
         self.register_prefix(TokenType.NOT, self.parse_prefix_expression)
         self.register_prefix(TokenType.MINUS, self.parse_prefix_expression)
@@ -187,8 +190,20 @@ class Parser(object):
             return statement
         return tree.Identifier(self.current_token, self.current_token.literal)
 
-    def parse_number(self):
-        literal = tree.NumLiteral(self.current_token, None)
+    def parse_integer(self):
+        literal = tree.IntegerLiteral(self.current_token, None)
+        
+        try:
+            value = int(self.current_token.literal)
+            literal.value = value
+            return literal
+        except ValueError:
+            ErrorHandler.error(
+                self.current_token.line, f'Could not parse integer literal from {literal}')
+            return None
+    
+    def parse_float(self):
+        literal = tree.FloatLiteral(self.current_token, None)
         
         try:
             value = float(self.current_token.literal)
@@ -196,9 +211,9 @@ class Parser(object):
             return literal
         except ValueError:
             ErrorHandler.error(
-                self.current_token.line, f'Could not parse integer literal from {literal}')
+                self.current_token.line, f'Could not parse float literal from {literal}')
             return None
-     
+
     def parse_string_literal(self):
        return tree.StringLiteral(self.current_token, self.current_token.literal) 
 
@@ -229,7 +244,7 @@ class Parser(object):
             key = self.parse_expression(PrecLevel.LOWEST)
             
 
-            if type(key) != tree.NumLiteral and type(key) != tree.StringLiteral:
+            if type(key) != tree.IntegerLiteral and type(key) != tree.StringLiteral and type(key) != tree.FloatLiteral:
                 return ErrorHandler.error(self.current_token.line, "invalid type for map key")
 
             if not self.expect_peek(TokenType.COLON):

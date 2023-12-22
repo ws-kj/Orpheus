@@ -167,16 +167,20 @@ class Scanner(object):
         self.add_token(token_type)
 
     def number(self):
+        isfloat = False
         while(self.peek().isdigit()):
             self.advance()
 
         if(self.peek() == '.' and self.peek_next().isdigit()):
+            isfloat = True
             self.advance()
 
             while(self.peek().isdigit()):
                 self.advance()
-
-        self.add_token(TokenType.NUMBER, float(self.source[self.start:self.current]))
+        if isfloat:
+            self.add_token(TokenType.FLOAT, float(self.source[self.start:self.current]))
+        else:
+            self.add_token(TokenType.INTEGER, float(self.source[self.start:self.current]))
 
     def string(self):
         while(self.peek() != '"' and not self.is_at_end()):

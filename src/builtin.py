@@ -1,19 +1,19 @@
 import obj
 from error_handler import ErrorHandler
 
-def bf_len(args):
+def __len(args):
     if(len(args) != 1):
         return ErrorHandler.runtime_error(f'len: expected 1 argument, got {len(args)}')
 
     match type(args[0]):
         case obj.String:
-            return obj.Number(float(len(args[0].value)))
+            return obj.Integer(int(len(args[0].value)))
         case obj.Array:
-            return obj.Number(float(len(args[0].elements)))
+            return obj.Integer(int(len(args[0].elements)))
         case _:
             return ErrorHandler.runtime_error(f'len: arg type {args[0].type()} not supported')
 
-def bf_print(args):
+def __print(args):
     if(len(args) > 1):
         return ErrorHandler.runtime_error(f'print: expected 1 argument, got {len(args)}')
     if(len(args) == 0): 
@@ -29,7 +29,7 @@ def bf_print(args):
 
     return obj.Nil()
 
-def bf_println(args):
+def __println(args):
     if(len(args) > 1):
         return ErrorHandler.runtime_error(f'println: expected 1 argument, got {len(args)}')
 
@@ -47,7 +47,7 @@ def bf_println(args):
 
     return obj.Nil()
 
-def bf_tail(args):
+def __tail(args):
     if len(args) != 1:
         return ErrorHandler.runtime_error(f'tail: expected 1 argument, got {len(args)}')
 
@@ -60,7 +60,7 @@ def bf_tail(args):
         return obj.Array(new)
     return obj.Nil()
 
-def bf_append(args):
+def __append(args):
     if len(args) != 2:
         return ErrorHandler.runtime_error(f'append: expected 2 arguments, got {len(args)}')
     if args[0].type() != obj.ObjectType.ARRAY:
@@ -70,10 +70,10 @@ def bf_append(args):
     return obj.Array(array)
 
 builtins = {
-    "len": obj.Builtin(bf_len),
-    "print": obj.Builtin(bf_print),
-    "println": obj.Builtin(bf_println),
-    "tail": obj.Builtin(bf_tail),
-    "append": obj.Builtin(bf_append)
+    "len": obj.Builtin(__len),
+    "print": obj.Builtin(__print),
+    "println": obj.Builtin(__println),
+    "tail": obj.Builtin(__tail),
+    "append": obj.Builtin(__append)
 }
 

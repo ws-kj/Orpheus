@@ -44,9 +44,17 @@ class Identifier(Expression):
     value: str | None = None
 
 @dataclass
-class NumLiteral(Expression):
+class FloatLiteral(Expression):
     token: Token
     value: float | None = None
+
+    def __hash__(self):
+        return hash((self.token, self.value))
+
+@dataclass
+class IntegerLiteral(Expression):
+    token: Token
+    value: int | None = None
 
     def __hash__(self):
         return hash((self.token, self.value))
