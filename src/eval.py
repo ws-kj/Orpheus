@@ -130,8 +130,9 @@ def unwrap_return_value(return_obj):
 
 def eval_block_statement(statements, env):
     result = None
+    new = Environment(outer=env)
     for statement in statements:
-        result = eval(statement, env)
+        result = eval(statement, new)
 
         if result != None:
             match result.type():

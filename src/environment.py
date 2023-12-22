@@ -14,6 +14,10 @@ class Environment(object):
         return None
 
     def set(self, name, val):
+        if self.outer != None and self.outer.get(name) != None:
+            self.outer.set(name, val)
+            return val
+
         self.store[name] = val
         return val
     

@@ -1,20 +1,6 @@
-func ret_adder()
+if true 
 ->
-    ret func adder(a, b) -> a + b
+    var a = 3
+    println(a)
 
-var myfunc = ret_adder()
-
-func add(a, b) -> ret a + b
-
-
-"hello"
-
-add(5, 2) + 1
-
-"hmm wow!" == "hmm" + " wow!"
-
-len("test") * 2
-
-print("Hello World!\n")
-
-5 * 2
+println(a)
