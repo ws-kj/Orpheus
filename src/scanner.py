@@ -78,7 +78,11 @@ class Scanner(object):
             case '*':
                 self.add_token(TokenType.STAR)
             case '/':
-                self.add_token(TokenType.SLASH)
+                if self.match('/'):
+                    while(self.peek() != '\n' and not self.is_at_end()):
+                        self.advance()
+                else:
+                    self.add_token(TokenType.SLASH)
             case '%':
                 self.add_token(TokenType.PERCENT)
             case ',':
@@ -106,9 +110,9 @@ class Scanner(object):
                     pass
                 else:
                     self.add_token(TokenType.GREATER)
-            case '#':
-                while(self.peek() != '\n' and not self.is_at_end()):
-                    self.advance()
+#            case '#':
+#                while(self.peek() != '\n' and not self.is_at_end()):
+#                    self.advance()
             case '\n':
                 self.add_token(TokenType.NEWLINE)
                 self.line += 1
