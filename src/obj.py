@@ -19,6 +19,11 @@ class ObjectType(Enum):
     ARRAY = auto()
     MAP = auto()
 
+class TypeSig:
+    def __init__(self, type: ObjectType, maybe=False):
+        self.type = type
+        self.maybe = maybe
+
 hashable = [ObjectType.INTEGER, ObjectType.FLOAT, ObjectType.STRING, ObjectType.BOOL]
 
 class Object(ABC):

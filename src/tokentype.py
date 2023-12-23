@@ -10,7 +10,6 @@ class TokenType(Enum):
     # literals
     IDENTIFIER = auto()
     STRING = auto()
-    NUMBER = auto() #DEPREC
     INSTRUCT = auto()
 
     INTEGER = auto()
@@ -55,10 +54,18 @@ class TokenType(Enum):
     TOOL = auto() # todo
     ACTION = auto() # todo
     SPAWN = auto() # todo 
-    FUNC = auto() 
-    T_NUM = auto() # todo
-    T_STR = auto() # todo
-    T_NIL = auto() # todo
+    FUNC = auto()
+
+    # type annotation stuff
+    T_INT = auto() 
+    T_STR = auto() 
+    T_FLOAT = auto()
+    T_BOOL = auto()
+    T_AUTO = auto()
+    T_ANY = auto()
+    T_ARRAY = auto()
+    T_MAP = auto()
+    QUESTION = auto() # for maybe
 
     # keywords
     AND = auto() # todo
@@ -75,3 +82,16 @@ class TokenType(Enum):
     PASS = auto() # todo
     BREAK = auto() #todo 
     LOOP = auto() #todo
+
+type_tokens = [
+    TokenType.T_INT,
+    TokenType.T_FLOAT,
+    TokenType.T_STR,
+    TokenType.T_BOOL,
+    TokenType.T_ANY,
+    TokenType.T_AUTO,
+    TokenType.T_ARRAY,
+    TokenType.T_MAP,
+    TokenType.FUNC
+]
+

@@ -1,8 +1,7 @@
-from abc import ABC, abstractmethod 
 from dataclasses import dataclass 
 from tokens import Token 
 
-class Node(ABC):
+class Node(object):
     token: Token 
 
     def token_literal(self):
@@ -13,6 +12,11 @@ class Statement(Node):
 
 class Expression(Node):  
     pass
+
+@dataclass
+class TypeAnnotation(Node):
+    token: Token
+    is_maybe: bool | None = False
 
 class Program(Node):
     def __init__(self):
@@ -89,8 +93,9 @@ class BlockStatement(Statement):
 class FunctionLiteral(Expression):
     token: Token
     name: Identifier | None = None
-    params: list[Identifier] | None = None
+    params: list[(Identifier, TypeAnnotation)] | None = None
     body: BlockStatement | None = None
+    return_type: TypeAnnotation | None = None
 
 @dataclass
 class CallExpression(Expression):
@@ -121,12 +126,14 @@ class ArrayLiteral(Expression):
     token: Token
     elements: list[Expression] | None = None
 
+
 @dataclass
 class VarStatement(Statement):
     token: Token
     name:  Identifier | None = None
+    type_annotation: TypeAnnotation | None = None
     value: Expression | None = None
-
+    
 @dataclass
 class AssignmentStatement(Statement):
     token: Token

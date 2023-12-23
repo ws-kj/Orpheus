@@ -12,23 +12,28 @@ class Scanner(object):
         "false": TokenType.FALSE,
         "if": TokenType.IF,
         "else": TokenType.ELSE,
-        "for": TokenType.FOR,
+    #    "for": TokenType.FOR,
         "while": TokenType.WHILE,
         "var": TokenType.VAR,
         "return": TokenType.RETURN,
         "pass": TokenType.PASS,
-        "break": TokenType.BREAK,
-        "loop": TokenType.LOOP,
+    #    "break": TokenType.BREAK,
+    #    "loop": TokenType.LOOP,
+        "func": TokenType.FUNC,
 
         #orpheus
-        "model": TokenType.MODEL,
-        "tool": TokenType.TOOL,
-        "action": TokenType.ACTION,
-        "spawn": TokenType.SPAWN,
-        "num": TokenType.T_NUM,
+    #    "model": TokenType.MODEL,
+    #    "tool": TokenType.TOOL,
+    #    "action": TokenType.ACTION,
+    #    "spawn": TokenType.SPAWN,
         "str": TokenType.T_STR,
-        "nil": TokenType.T_NIL,
-        "func": TokenType.FUNC
+        "int": TokenType.T_INT,
+        "float": TokenType.T_FLOAT,
+        "bool": TokenType.T_BOOL,
+        "any": TokenType.T_ANY,
+        "auto": TokenType.T_AUTO,
+        "list": TokenType.T_ARRAY,
+        "map": TokenType.T_MAP
     }
 
     def __init__(self, source: str):
@@ -110,6 +115,8 @@ class Scanner(object):
                     pass
                 else:
                     self.add_token(TokenType.GREATER)
+            case '?':
+                self.add_token(TokenType.QUESTION)
 #            case '#':
 #                while(self.peek() != '\n' and not self.is_at_end()):
 #                    self.advance()

@@ -1,6 +1,6 @@
 import tree 
 from tokens import Token
-from tokentype import TokenType
+from tokentype import TokenType, type_tokens
 from error_handler import ErrorHandler
 from enum import Enum, IntEnum, auto
 
@@ -375,30 +375,43 @@ class Parser(object):
         return statement
 
     def parse_function_literal(self):
-        literal = tree.FunctionLiteral(self.current_token, None, None, None)
+        literal = tree.FunctionLiteral(self.current_token, None, None, None, None)
         if(not self.expect_peek(TokenType.IDENTIFIER)): return None
         literal.name = tree.Identifier(self.current_token, self.current_token.literal)
         if(not self.expect_peek(TokenType.LPAREN)): return None
         literal.params = self.parse_function_parameters()
+
+        if self.peek_token_is(TokenType.COLON):
+            self.advance()
+            self.advance()
+            literal.return_type = self.parse_type()
+
         literal.body = self.parse_arrow_block()
         return literal
 
     def parse_function_parameters(self):
-        idents = []
+        params = []
         if(self.peek_token_is(TokenType.RPAREN)):
             self.advance()
-            return idents
+            return params
         self.advance()
         ident = tree.Identifier(self.current_token, self.current_token.literal)
-        idents.append(ident)
+        if not self.expect_peek(TokenType.COLON): return None
+        self.advance()
+        t = self.parse_type()
+        params.append((ident, t))
+
         while(self.peek_token_is(TokenType.COMMA)):
             self.advance()
             self.advance()
             ident = tree.Identifier(self.current_token, self.current_token.literal)
-            idents.append(ident)
+            if not self.expect_peek(TokenType.COLON): return None
+            self.advance()
+            t = self.parse_type()
+            params.append((ident, t))
 
         if(not self.expect_peek(TokenType.RPAREN)): return None
-        return idents
+        return params
 
     def parse_call_expression(self, function):
         exp = tree.CallExpression(self.current_token, function, None)
@@ -465,6 +478,12 @@ class Parser(object):
 
         statement.name = tree.Identifier(self.current_token, self.current_token.literal)
 
+        if not self.expect_peek(TokenType.COLON): return None
+        self.advance()
+
+        annotation = self.parse_type()
+        statement.type_annotation = annotation
+
         if(not self.expect_peek(TokenType.EQUAL)): return None
 
         self.advance()
@@ -473,6 +492,16 @@ class Parser(object):
         if(self.is_peek_end()): self.advance()
 
         return statement
+
+    def parse_type(self):
+        maybe = self.peek_token_is(TokenType.QUESTION)
+        if not self.current_token.type in type_tokens: 
+            ErrorHandler.error(self.current_token.line, "Expected valid type")
+
+        annotation = tree.TypeAnnotation(self.current_token, maybe)
+        if maybe:
+            self.advance()
+        return annotation
 
     def parse_return_statement(self):
         statement = tree.ReturnStatement(self.current_token, None)
