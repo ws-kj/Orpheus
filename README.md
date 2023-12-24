@@ -22,9 +22,9 @@ Development goals:
 Examples:
 
 ```
-func fizzbuzz(n)
+func fizzbuzz(n: int)
 ->
-    var x = 1
+    var x: auto = 1
 
     while x <= n
     ->
@@ -39,13 +39,13 @@ fizzbuzz(20)
 ```
 
 ```
-var people = [
+var people: list = [
     { "name": "Bob", "age": 25 },
     { "name": "Alice", "age": 17 },
     { "name": "John", "age": 22 }
 ]
 
-func greet(person)
+func greet(person: map)
 ->    
     print(person["name"])
     print(" is ")

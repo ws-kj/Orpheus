@@ -1,6 +1,6 @@
 func fizzbuzz(n: int)
 ->
-    var x: int = 1
+    var x: auto = 1
 
     while x <= n
     ->
