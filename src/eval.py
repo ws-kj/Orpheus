@@ -114,16 +114,25 @@ def eval_var_statement(node, env):
 
     if tsig.obj_type == None and not tsig.any:
         tsig.obj_type = val.type()
-    else:
-        if tsig.obj_type != None and val.type() != tsig.obj_type:
-            return ErrorHandler.runtime_error(f'incompatible types: {val.type()} {tsig.obj_type}')
 
-    env.set(node.name.value, val)
+    return try_assign(node.name.value, val, env, tsig)
+
+def try_assign(name, val, env, tsig=None):
+    if tsig == None:
+        tsig = env.get_tsig(name)
+        if tsig == None:
+            return None
+    
+    if tsig.obj_type != obj.ObjectType.ANY and val.type() != tsig.obj_type:
+        return ErrorHandler.runtime_error(f'incompatible types: {val.type()} {tsig.obj_type}')
+
+    env.set(name, val, tsig)
 
 def apply_function(func, args):
     match type(func):
         case obj.Function:
             ext_env = extend_func_env(func, args)
+            if is_error(ext_env): return ext_env
             evaluated = eval(func.body, ext_env)
             return unwrap_return_value(evaluated)
         case obj.Builtin:
@@ -134,7 +143,11 @@ def apply_function(func, args):
 def extend_func_env(func, args):
     env = Environment(outer=func.env)
     for idx, param in enumerate(func.params):
-        env.set(param.value, args[idx])
+        name = param[0].value
+        val  = args[idx]
+        tsig = obj.typesig(param[1])
+        res = try_assign(name, val, env, tsig)
+        if is_error(res): return res
 
     return env
 
@@ -175,8 +188,7 @@ def eval_assignment_statement(node, env):
         val = eval(node.value, env)
         if is_error(val): 
             return val
-        env.set(node.name.value, val)
-        return
+        return try_assign(node.name.value, val, env)
     return ErrorHandler.runtime_error(f'unknown variable: {node.name.value}')
 
 def eval_index_assignment(node, env):
@@ -358,7 +370,7 @@ def is_truthy(obj):
     return True
 
 def is_error(o):
-    if o != None:
+    if o != None and hasattr(o, 'type') and callable(o.type):
         return o.type() == obj.ObjectType.ERROR
     return False
 

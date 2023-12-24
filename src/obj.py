@@ -18,6 +18,7 @@ class ObjectType(Enum):
     BUILTIN = auto()
     ARRAY = auto()
     MAP = auto()
+    ANY = auto()
 
 class TypeSig:
     def __init__(self, obj_type: ObjectType, maybe=False, any=False):
@@ -33,7 +34,7 @@ tok_objs = {
     TokenType.T_ARRAY: ObjectType.ARRAY,
     TokenType.T_MAP: ObjectType.MAP,
     TokenType.T_AUTO: None,
-    TokenType.T_ANY: None
+    TokenType.T_ANY: ObjectType.ANY
 }
 
 def typesig(annotation) -> TypeSig:

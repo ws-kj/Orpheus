@@ -294,7 +294,6 @@ class Parser(object):
         exp.index = [self.parse_expression(PrecLevel.LOWEST)]
         if not self.expect_peek(TokenType.RBRACKET):
             return None
-#NEW GPT STUFF
         while self.peek_token_is(TokenType.LBRACKET):
             self.advance()
             self.advance()
@@ -399,6 +398,8 @@ class Parser(object):
         if not self.expect_peek(TokenType.COLON): return None
         self.advance()
         t = self.parse_type()
+        if t.token.type == TokenType.T_AUTO:
+            return ErrorHandler.error(self.current_token.line, "auto invalid in function declaration")
         params.append((ident, t))
 
         while(self.peek_token_is(TokenType.COMMA)):
@@ -407,7 +408,9 @@ class Parser(object):
             ident = tree.Identifier(self.current_token, self.current_token.literal)
             if not self.expect_peek(TokenType.COLON): return None
             self.advance()
-            t = self.parse_type()
+            t = self.parse_type()    
+            if t.token.type == TokenType.T_AUTO:
+                return ErrorHandler.error(self.current_token.line, "auto invalid in function declaration")
             params.append((ident, t))
 
         if(not self.expect_peek(TokenType.RPAREN)): return None

@@ -18,6 +18,14 @@ class Environment(object):
 
         return None
 
+    def get_tsig(self, name):
+        if name in self.store:
+            return self.store[name].type_signature
+        elif self.outer != None:
+            return self.outer.get(name)
+
+        return None
+
     def set(self, name, val, sig=None):
         if self.outer != None and self.outer.get(name) != None:
             self.outer.set(name, val, sig)

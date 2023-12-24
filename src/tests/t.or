@@ -1,7 +1,17 @@
-//func add(a: int, b: int) : int
-//->
-//    return a + b
+func add(a: int, b: any)
+->
+    return a + b
 
-var n: any = 5
+add(1, 2)
 
-n
+func double(n: any)
+->
+    if len(n) > 0
+    ->
+        return n[0]*2
+
+var a: list = [2, 3]
+
+println(double(a))
+
+var a = 4
