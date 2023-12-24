@@ -34,7 +34,8 @@ tok_objs = {
     TokenType.T_ARRAY: ObjectType.ARRAY,
     TokenType.T_MAP: ObjectType.MAP,
     TokenType.T_AUTO: None,
-    TokenType.T_ANY: ObjectType.ANY
+    TokenType.T_ANY: ObjectType.ANY,
+    TokenType.FUNC: ObjectType.FUNCTION
 }
 
 def typesig(annotation) -> TypeSig:
@@ -182,6 +183,7 @@ class Function(Object):
     params: list[tree.Identifier]
     body: tree.BlockStatement
     env: Environment
+    tsig: TypeSig | None = None
 
     def inspect(self):
         return f'func {self.name.value}'

@@ -44,7 +44,7 @@ class Orpheus(object):
         if ErrorHandler.had_error:
             return
 
-        debug = True
+        debug = False
 
         if(debug):
             for s in program.statements:

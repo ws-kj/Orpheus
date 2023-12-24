@@ -298,7 +298,6 @@ class Parser(object):
             self.advance()
             self.advance()
             exp.index.append(self.parse_expression(PrecLevel.LOWEST))
-            #print(exp)
             if not self.expect_peek(TokenType.RBRACKET):
                 return None
 

@@ -53,9 +53,7 @@ def eval(node, env):
         case tree.Identifier:
             return eval_ident(node, env)
         case tree.FunctionLiteral:
-            func_obj = obj.Function(node.name, node.params, node.body, env)
-            env.set(node.name.value, func_obj)
-            return func_obj
+            return eval_function_literal(node, env)
         case tree.CallExpression:
             func = eval(node.function, env)
             if(is_error(func)): 
@@ -128,13 +126,23 @@ def try_assign(name, val, env, tsig=None):
 
     env.set(name, val, tsig)
 
+def eval_function_literal(node, env):
+    tsig = None
+    if node.return_type != None:
+        tsig = obj.typesig(node.return_type)
+        if(tsig == None): return ErrorHandler.runtime_error('bad return type')
+
+    func_obj = obj.Function(node.name, node.params, node.body, env, tsig)
+    try_assign(node.name.value, func_obj, env, obj.TypeSig(obj.ObjectType.FUNCTION))
+    return func_obj
+
 def apply_function(func, args):
     match type(func):
         case obj.Function:
             ext_env = extend_func_env(func, args)
             if is_error(ext_env): return ext_env
             evaluated = eval(func.body, ext_env)
-            return unwrap_return_value(evaluated)
+            return unwrap_return_value(evaluated, func.tsig)
         case obj.Builtin:
             return func.function(args)
         case _:
@@ -151,10 +159,13 @@ def extend_func_env(func, args):
 
     return env
 
-def unwrap_return_value(return_obj):
-    if type(return_obj) == obj.ReturnValue:
-        return return_obj.value
+def unwrap_return_value(return_obj, tsig=None):
+    if type(return_obj) == obj.ReturnValue: 
+        if tsig != None and not tsig.any:
+            if return_obj.value.type() != tsig.obj_type:
+                return ErrorHandler.runtime_error(f'incompatible return type. expected {tsig.obj_type} got {return_obj.value.type()}')
 
+        return return_obj.value
     return return_obj
 
 def eval_block_statement(statements, env):
@@ -166,11 +177,12 @@ def eval_block_statement(statements, env):
         if result != None:
             match result.type():
                 case obj.ObjectType.RETURN_VALUE:
-                    return result
+                    break
                 case obj.ObjectType.ERROR:
-                    return result
+                    break
                 case _:
                     pass
+
     return result
 
 def eval_ident(node, env):
