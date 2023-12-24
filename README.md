@@ -53,7 +53,7 @@ func greet(person: map)
     println(" years old.")
 
 
-var i = 0
+var i: int = 0
 while i < len(people)
 ->
     greet(people[i])
@@ -66,6 +66,13 @@ while i < len(people)
     println()
 
     i = i + 1
+```
+
+```
+var test: any = 3.0
+println(test)
+test = "hello world!"
+println(test)
 ```
 
 :)
