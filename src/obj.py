@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Callable
 from enum import Enum, auto
-
 from environment import Environment
 import tree 
+from tokentype import TokenType
 
 class ObjectType(Enum):
     INTEGER = auto()
@@ -20,9 +20,28 @@ class ObjectType(Enum):
     MAP = auto()
 
 class TypeSig:
-    def __init__(self, type: ObjectType, maybe=False):
-        self.type = type
+    def __init__(self, obj_type: ObjectType, maybe=False, any=False):
+        self.obj_type = obj_type
         self.maybe = maybe
+        self.any = any
+
+tok_objs = {
+    TokenType.T_INT: ObjectType.INTEGER,
+    TokenType.T_STR: ObjectType.STRING,
+    TokenType.T_FLOAT: ObjectType.FLOAT,
+    TokenType.T_BOOL: ObjectType.BOOL,
+    TokenType.T_ARRAY: ObjectType.ARRAY,
+    TokenType.T_MAP: ObjectType.MAP,
+    TokenType.T_AUTO: None,
+    TokenType.T_ANY: None
+}
+
+def typesig(annotation) -> TypeSig:
+    if not annotation.token.type in tok_objs.keys(): return None
+    return TypeSig(
+        tok_objs[annotation.token.type], 
+        annotation.is_maybe, 
+        annotation.token.type == TokenType.T_ANY)
 
 hashable = [ObjectType.INTEGER, ObjectType.FLOAT, ObjectType.STRING, ObjectType.BOOL]
 
@@ -33,7 +52,7 @@ class Object(ABC):
 class HashKey:
     type: ObjectType
     value: int
-    
+
     def __hash__(self):
         return hash((self.type, self.value))
 

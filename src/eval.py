@@ -37,9 +37,8 @@ def eval(node, env):
         case tree.WhileStatement:
             eval_while_statement(node, env)
         case tree.VarStatement:
-            val = eval(node.value, env)
-            if(is_error(val)): return val
-            env.set(node.name.value, val)
+            res = eval_var_statement(node, env)
+            if(is_error(res)): return res
         case tree.AssignmentStatement:
             res = eval_assignment_statement(node, env)
             if is_error(res): return res
@@ -105,6 +104,21 @@ def eval_expressions(exps, env):
         if(is_error(evaluated)): return [evaluated]
         result.append(evaluated)
     return result
+
+def eval_var_statement(node, env):
+    val = eval(node.value, env)
+    if(is_error(val)): return val
+
+    tsig = obj.typesig(node.type_annotation)
+    if(tsig == None): return ErrorHandler.runtime_error('bad type signature')
+
+    if tsig.obj_type == None and not tsig.any:
+        tsig.obj_type = val.type()
+    else:
+        if tsig.obj_type != None and val.type() != tsig.obj_type:
+            return ErrorHandler.runtime_error(f'incompatible types: {val.type()} {tsig.obj_type}')
+
+    env.set(node.name.value, val)
 
 def apply_function(func, args):
     match type(func):
