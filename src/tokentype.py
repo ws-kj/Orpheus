@@ -66,20 +66,20 @@ class TokenType(Enum):
     T_ARRAY = auto()
     T_MAP = auto()
     QUESTION = auto() # for maybe
-
+    
     # keywords
-    AND = auto() # todo
-    OR = auto() # todo
+    AND = auto() 
+    OR = auto() 
     NOT = auto()
     TRUE = auto()
     FALSE = auto()
     IF = auto()
-    ELSE = auto() # todo
+    ELSE = auto() 
     FOR = auto() # todo 
-    WHILE = auto() # todo
+    WHILE = auto() 
     VAR = auto()
     RETURN = auto()
-    PASS = auto() # todo
+    PASS = auto() 
     BREAK = auto() #todo 
     LOOP = auto() #todo
 

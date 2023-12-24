@@ -52,6 +52,9 @@ def eval(node, env):
             return bool_obj(node.value)
         case tree.Identifier:
             return eval_ident(node, env)
+        case tree.TypeAnnotation:
+            return obj.TypeSig(obj.tok_objs[node.token.type]) 
+            # for type(var) == int, we dont want to cmp maybe/any since val is all we care about
         case tree.FunctionLiteral:
             return eval_function_literal(node, env)
         case tree.CallExpression:

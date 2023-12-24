@@ -71,11 +71,17 @@ def __append(args):
     array.append(args[1])
     return obj.Array(array)
 
+def __type(args):
+    if len(args) != 1:
+        return ErrorHandler.runtime_error(f'type: expected 1 argument, got {len(args)}')
+    return obj.TypeSig(args[0].type())
+
 builtins = {
     "len": obj.Builtin(__len),
     "print": obj.Builtin(__print),
     "println": obj.Builtin(__println),
     "tail": obj.Builtin(__tail),
-    "append": obj.Builtin(__append)
+    "append": obj.Builtin(__append),
+    "type": obj.Builtin(__type)
 }
 

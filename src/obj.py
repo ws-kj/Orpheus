@@ -19,12 +19,7 @@ class ObjectType(Enum):
     ARRAY = auto()
     MAP = auto()
     ANY = auto()
-
-class TypeSig:
-    def __init__(self, obj_type: ObjectType, maybe=False, any=False):
-        self.obj_type = obj_type
-        self.maybe = maybe
-        self.any = any
+    TYPE = auto()
 
 tok_objs = {
     TokenType.T_INT: ObjectType.INTEGER,
@@ -37,6 +32,18 @@ tok_objs = {
     TokenType.T_ANY: ObjectType.ANY,
     TokenType.FUNC: ObjectType.FUNCTION
 }
+
+class TypeSig:
+    def __init__(self, obj_type: ObjectType, maybe=False, any=False):
+        self.obj_type = obj_type
+        self.value = obj_type
+        self.maybe = maybe
+        self.any = any
+
+    def inspect(self):
+        return f'{self.obj_type}'
+    def type(self):
+        return ObjectType.TYPE
 
 def typesig(annotation) -> TypeSig:
     if not annotation.token.type in tok_objs.keys(): return None

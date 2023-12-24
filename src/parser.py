@@ -61,6 +61,13 @@ class Parser(object):
         self.register_prefix(TokenType.TRUE, self.parse_boolean)
         self.register_prefix(TokenType.FALSE, self.parse_boolean)
 
+        self.register_prefix(TokenType.T_INT, self.parse_type_literal)
+        self.register_prefix(TokenType.T_FLOAT, self.parse_type_literal)
+        self.register_prefix(TokenType.T_STR, self.parse_type_literal)
+        self.register_prefix(TokenType.T_MAP, self.parse_type_literal)
+        self.register_prefix(TokenType.T_ARRAY, self.parse_type_literal)
+
+
         self.register_prefix(TokenType.LPAREN, self.parse_grouped_expression)
         self.register_prefix(TokenType.LBRACKET, self.parse_array_literal)
         self.register_prefix(TokenType.LBRACE, self.parse_map_literal) 
@@ -179,6 +186,9 @@ class Parser(object):
             left_exp = infix(left_exp)
 
         return left_exp
+
+    def parse_type_literal(self):
+        return tree.TypeAnnotation(self.current_token, False)
 
     def parse_identifier(self):
         if(self.peek_token_is(TokenType.EQUAL)):
