@@ -1,0 +1,3 @@
+var me: map = {"p": 3, "e": 5}
+
+len(me)

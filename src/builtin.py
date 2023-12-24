@@ -10,6 +10,8 @@ def __len(args):
             return obj.Integer(int(len(args[0].value)))
         case obj.Array:
             return obj.Integer(int(len(args[0].elements)))
+        case obj.Map:
+            return obj.Integer(int(len(args[0].pairs)))
         case _:
             return ErrorHandler.runtime_error(f'len: arg type {args[0].type()} not supported')
 
