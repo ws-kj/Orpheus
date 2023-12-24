@@ -1,6 +1,6 @@
-func fizzbuzz(n)
+func fizzbuzz(n: int)
 ->
-    var x = 1
+    var x: int = 1
 
     while x <= n
     ->

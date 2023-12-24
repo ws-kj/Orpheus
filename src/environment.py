@@ -22,7 +22,7 @@ class Environment(object):
         if name in self.store:
             return self.store[name].type_signature
         elif self.outer != None:
-            return self.outer.get(name)
+            return self.outer.get_tsig(name)
 
         return None
 

@@ -14,4 +14,8 @@ var a: list = [2, 3]
 
 println(double(a))
 
-var a = 4
+var n: int = 5
+println(n)
+n = 3
+n = n + 1
+println(n)
