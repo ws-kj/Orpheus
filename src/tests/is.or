@@ -4,4 +4,5 @@ func test(a: int, b: int): int
 
 var a: func = test
 
-a is func
+println(true is bool)
+println(a is func)

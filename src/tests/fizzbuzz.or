@@ -14,4 +14,3 @@ func fizzbuzz(n: int)
 //fizzbuzz(90)
 
 fizzbuzz is func
-var n: type = int 

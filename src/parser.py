@@ -8,13 +8,13 @@ class PrecLevel(IntEnum):
     LOWEST = auto()
     AND_OR = auto()
     EQUALS = auto()
+    IS = auto()
     LESS_GREATER = auto()
     SUM = auto()
     PRODUCT = auto()
     PREFIX = auto()
     CALL = auto()
     INDEX = auto()
-    IS = auto()
 
 class Parser(object):
 
@@ -68,6 +68,7 @@ class Parser(object):
         self.register_prefix(TokenType.T_STR, self.parse_type_literal)
         self.register_prefix(TokenType.T_MAP, self.parse_type_literal)
         self.register_prefix(TokenType.T_ARRAY, self.parse_type_literal)
+        self.register_prefix(TokenType.T_BOOL, self.parse_type_literal)
         self.register_prefix(TokenType.FUNC, self.parse_type_literal)
 
         self.register_prefix(TokenType.LPAREN, self.parse_grouped_expression)
