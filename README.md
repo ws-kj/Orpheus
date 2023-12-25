@@ -75,4 +75,10 @@ test = "hello world!"
 println(test)
 ```
 
+```
+if "hello" is str 
+->
+    println("This will execute!")
+```
+
 :)
