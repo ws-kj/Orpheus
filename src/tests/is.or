@@ -1,8 +1,5 @@
 func test(a: int, b: int): int
 ->
-    return a + b
+    a + b
 
-var a: func = test
-
-println(true is bool)
-println(a is func)
+test(1, 3)

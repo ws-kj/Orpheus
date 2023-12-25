@@ -164,11 +164,11 @@ def extend_func_env(func, args):
 
 def unwrap_return_value(return_obj, tsig=None):
     if type(return_obj) == obj.ReturnValue: 
-        if tsig != None and not tsig.any:
-            if return_obj.value.type() != tsig.obj_type:
-                return ErrorHandler.runtime_error(f'incompatible return type. expected {tsig.obj_type} got {return_obj.value.type()}')
+        return_obj = return_obj.value
 
-        return return_obj.value
+    if tsig != None and not tsig.any:
+        if return_obj.type() != tsig.obj_type:
+            return ErrorHandler.runtime_error(f'incompatible return type. expected {tsig.obj_type} got {return_obj.type()}')
     return return_obj
 
 def eval_block_statement(statements, env):

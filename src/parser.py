@@ -95,7 +95,6 @@ class Parser(object):
         self.register_infix(TokenType.PERCENT, self.parse_infix_expression)
         self.register_infix(TokenType.AND, self.parse_infix_expression)
         self.register_infix(TokenType.OR, self.parse_infix_expression)
-
         self.register_infix(TokenType.IS, self.parse_infix_expression)
         
 
