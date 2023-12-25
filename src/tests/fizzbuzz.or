@@ -11,4 +11,7 @@ func fizzbuzz(n: int)
         
         x = x + 1
 
-fizzbuzz(20)
+//fizzbuzz(90)
+
+fizzbuzz is func
+var n: type = int 

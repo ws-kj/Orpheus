@@ -90,7 +90,7 @@ class BlockStatement(Statement):
     statements: list[Statement] | None = None
 
 @dataclass
-class FunctionLiteral(Expression):
+class FunctionLiteral(Statement):
     token: Token
     name: Identifier | None = None
     params: list[(Identifier, TypeAnnotation)] | None = None

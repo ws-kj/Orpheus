@@ -8,13 +8,13 @@ class PrecLevel(IntEnum):
     LOWEST = auto()
     AND_OR = auto()
     EQUALS = auto()
-    IS = auto()
     LESS_GREATER = auto()
     SUM = auto()
     PRODUCT = auto()
     PREFIX = auto()
     CALL = auto()
     INDEX = auto()
+    IS = auto()
 
 class Parser(object):
 
@@ -68,7 +68,7 @@ class Parser(object):
         self.register_prefix(TokenType.T_STR, self.parse_type_literal)
         self.register_prefix(TokenType.T_MAP, self.parse_type_literal)
         self.register_prefix(TokenType.T_ARRAY, self.parse_type_literal)
-
+        self.register_prefix(TokenType.FUNC, self.parse_type_literal)
 
         self.register_prefix(TokenType.LPAREN, self.parse_grouped_expression)
         self.register_prefix(TokenType.LBRACKET, self.parse_array_literal)
@@ -78,7 +78,6 @@ class Parser(object):
         self.register_prefix(TokenType.IF, self.parse_if_expression)
         self.register_prefix(TokenType.PASS, self.parse_pass_statement)
         self.register_prefix(TokenType.WHILE, self.parse_while_statement)
-        #self.register_prefix(TokenType.FUNC, self.parse_function_literal)
     
         self.register_infix(TokenType.LBRACKET, self.parse_index_expression)
         self.register_infix(TokenType.LPAREN, self.parse_call_expression)
@@ -160,7 +159,7 @@ class Parser(object):
             case TokenType.RETURN:
                 return self.parse_return_statement()
             case TokenType.FUNC:
-                return self.parse_function_literal()
+                return self.parse_func_statement()
             case TokenType.NEWLINE | TokenType.INDENT | TokenType.DEDENT:
                 return None
             case _:
@@ -388,7 +387,7 @@ class Parser(object):
         statement.body = self.parse_arrow_block()
         return statement
 
-    def parse_function_literal(self):
+    def parse_func_statement(self):
         literal = tree.FunctionLiteral(self.current_token, None, None, None, None)
         if(not self.expect_peek(TokenType.IDENTIFIER)): return None
         literal.name = tree.Identifier(self.current_token, self.current_token.literal)
@@ -481,13 +480,21 @@ class Parser(object):
         expression = tree.InfixExpression(
             self.current_token, left, self.current_token.literal, None)
 
-
         prec = self.current_precedence()
         self.advance()
         expression.right = self.parse_expression(prec)
-
+        
         return expression
 
+    #def parse_is_expression(self):
+    #    if not self.peek_token.type in type_tokens:
+    #        ErrorHandler.error(self.peek_token.line, f'expected valid type')
+    #        return None
+    #    expr = tree.IsExpression(self.current_token, self.peek_token)
+    #    self.advance()
+    #    self.advance()
+    #    return expr
+        
     def parse_var_statement(self):
         statement = tree.VarStatement(self.current_token, None, None)
 

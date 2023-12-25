@@ -311,6 +311,11 @@ def eval_infix_expression(node, left, right, env):
     if(left.type() != right.type()):
         return ErrorHandler.runtime_error(f'type mismatch: {left.type()} {right.type()}')
 
+    if not hasattr(left, "value"):
+        return ErrorHandler.runtime_error(f'invalid operator on type {left.type()}')
+    if not hasattr(right, "value"):
+        return ErrorHandler.runtime_error(f'invalid operator on type {right.type()}')
+
     left_val = left.value
     right_val = right.value
 
