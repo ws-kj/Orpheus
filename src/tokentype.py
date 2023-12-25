@@ -82,6 +82,7 @@ class TokenType(Enum):
     PASS = auto() 
     BREAK = auto() #todo 
     LOOP = auto() #todo
+    IS = auto()
 
 type_tokens = [
     TokenType.T_INT,

@@ -26,6 +26,7 @@ class Scanner(object):
     #    "tool": TokenType.TOOL,
     #    "action": TokenType.ACTION,
     #    "spawn": TokenType.SPAWN,
+        "is": TokenType.IS,
         "str": TokenType.T_STR,
         "int": TokenType.T_INT,
         "float": TokenType.T_FLOAT,

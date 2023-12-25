@@ -137,7 +137,7 @@ def eval_function_literal(node, env):
 
     func_obj = obj.Function(node.name, node.params, node.body, env, tsig)
     try_assign(node.name.value, func_obj, env, obj.TypeSig(obj.ObjectType.FUNCTION))
-    return func_obj
+    #return func_obj
 
 def apply_function(func, args):
     match type(func):
@@ -302,10 +302,17 @@ def eval_map_literal(node, env):
     return obj.Map(pairs)
 
 def eval_infix_expression(node, left, right, env):
-    left_val = left.value
-    right_val = right.value
+
+    if node.token.type == TokenType.IS:
+        if right.type() != obj.ObjectType.TYPE:
+            return ErrorHandler.runtime_error(f'expected valid type, got {right.type()}')
+        return bool_obj(left.type() == right.obj_type)
+
     if(left.type() != right.type()):
         return ErrorHandler.runtime_error(f'type mismatch: {left.type()} {right.type()}')
+
+    left_val = left.value
+    right_val = right.value
 
     match left.type():
         case obj.ObjectType.INTEGER:

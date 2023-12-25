@@ -8,6 +8,7 @@ class PrecLevel(IntEnum):
     LOWEST = auto()
     AND_OR = auto()
     EQUALS = auto()
+    IS = auto()
     LESS_GREATER = auto()
     SUM = auto()
     PRODUCT = auto()
@@ -22,6 +23,7 @@ class Parser(object):
         TokenType.OR: PrecLevel.AND_OR,
         TokenType.EQUAL_EQUAL: PrecLevel.EQUALS,
         TokenType.BANG_EQUAL: PrecLevel.EQUALS,
+        TokenType.IS: PrecLevel.IS,
         TokenType.LESS: PrecLevel.LESS_GREATER,
         TokenType.LESS_EQUAL: PrecLevel.LESS_GREATER,
         TokenType.GREATER: PrecLevel.LESS_GREATER,
@@ -76,7 +78,7 @@ class Parser(object):
         self.register_prefix(TokenType.IF, self.parse_if_expression)
         self.register_prefix(TokenType.PASS, self.parse_pass_statement)
         self.register_prefix(TokenType.WHILE, self.parse_while_statement)
-        self.register_prefix(TokenType.FUNC, self.parse_function_literal)
+        #self.register_prefix(TokenType.FUNC, self.parse_function_literal)
     
         self.register_infix(TokenType.LBRACKET, self.parse_index_expression)
         self.register_infix(TokenType.LPAREN, self.parse_call_expression)
@@ -93,6 +95,8 @@ class Parser(object):
         self.register_infix(TokenType.PERCENT, self.parse_infix_expression)
         self.register_infix(TokenType.AND, self.parse_infix_expression)
         self.register_infix(TokenType.OR, self.parse_infix_expression)
+
+        self.register_infix(TokenType.IS, self.parse_infix_expression)
         
 
     def parse_first(self, tokens):
@@ -155,6 +159,8 @@ class Parser(object):
                 return self.parse_var_statement()
             case TokenType.RETURN:
                 return self.parse_return_statement()
+            case TokenType.FUNC:
+                return self.parse_function_literal()
             case TokenType.NEWLINE | TokenType.INDENT | TokenType.DEDENT:
                 return None
             case _:

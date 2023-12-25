@@ -13,11 +13,6 @@ class Statement(Node):
 class Expression(Node):  
     pass
 
-@dataclass
-class TypeAnnotation(Node):
-    token: Token
-    is_maybe: bool | None = False
-
 class Program(Node):
     def __init__(self):
         self.statements = [] 
@@ -27,6 +22,11 @@ class Program(Node):
             return self.statements[0].token_literal() 
         else:
             return "" 
+
+@dataclass
+class TypeAnnotation(Node):
+    token: Token
+    is_maybe: bool | None = False
 
 @dataclass
 class PrefixExpression(Expression):
