@@ -55,6 +55,7 @@ class Parser(object):
 
         self.register_prefix(TokenType.INTEGER, self.parse_integer)
         self.register_prefix(TokenType.FLOAT, self.parse_float)
+        self.register_prefix(TokenType.NIL, self.parse_nil)
 
         self.register_prefix(TokenType.STRING, self.parse_string_literal) 
         self.register_prefix(TokenType.NOT, self.parse_prefix_expression)
@@ -204,6 +205,9 @@ class Parser(object):
             statement.value = self.parse_expression(PrecLevel.LOWEST)
             return statement
         return tree.Identifier(self.current_token, self.current_token.literal)
+
+    def parse_nil(self):
+        return tree.Nil(self.current_token)
 
     def parse_integer(self):
         literal = tree.IntegerLiteral(self.current_token, None)
@@ -398,7 +402,9 @@ class Parser(object):
             self.advance()
             self.advance()
             literal.return_type = self.parse_type()
-
+        else:
+            tt = Token(TokenType.NIL, 'nil', self.current_token.line)
+            literal.return_type = tree.TypeAnnotation(tt, False)
         literal.body = self.parse_arrow_block()
         return literal
 

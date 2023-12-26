@@ -47,6 +47,10 @@ class Identifier(Expression):
     token: Token
     value: str | None = None
 
+@dataclass 
+class Nil(Expression):
+    token: Token
+
 @dataclass
 class FloatLiteral(Expression):
     token: Token

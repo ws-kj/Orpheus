@@ -30,7 +30,8 @@ tok_objs = {
     TokenType.T_MAP: ObjectType.MAP,
     TokenType.T_AUTO: None,
     TokenType.T_ANY: ObjectType.ANY,
-    TokenType.FUNC: ObjectType.FUNCTION
+    TokenType.FUNC: ObjectType.FUNCTION,
+    TokenType.NIL: ObjectType.NIL
 }
 
 class TypeSig:
@@ -148,7 +149,6 @@ class Bool(Object):
 
 @dataclass
 class Nil(Object):
-    value = None
     def inspect(self):
         return "nil"
     def type(self):

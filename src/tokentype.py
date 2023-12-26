@@ -14,6 +14,7 @@ class TokenType(Enum):
 
     INTEGER = auto()
     FLOAT = auto()
+    NIL = auto()
 
     # single char tokens
     LPAREN = auto()

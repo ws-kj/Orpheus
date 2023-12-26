@@ -1,4 +1,4 @@
-func fizzbuzz(n: int)
+func fizzbuzz(n: int) : int?
 ->
     var x: auto = 1
 
@@ -11,6 +11,5 @@ func fizzbuzz(n: int)
         
         x = x + 1
 
-//fizzbuzz(90)
+var x: int? = fizzbuzz(15)
 
-fizzbuzz is func

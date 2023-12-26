@@ -52,6 +52,8 @@ def eval(node, env):
             return bool_obj(node.value)
         case tree.Identifier:
             return eval_ident(node, env)
+        case tree.Nil:
+            return obj.Nil()
         case tree.TypeAnnotation:
             return obj.TypeSig(obj.tok_objs[node.token.type]) 
             # for type(var) == int, we dont want to cmp maybe/any since val is all we care about
@@ -123,9 +125,10 @@ def try_assign(name, val, env, tsig=None):
         tsig = env.get_tsig(name)
         if tsig == None:
             return None
-    
+   
     if tsig.obj_type != obj.ObjectType.ANY and val.type() != tsig.obj_type:
-        return ErrorHandler.runtime_error(f'incompatible types: {val.type()} {tsig.obj_type}')
+        if not (tsig.maybe and val.type() == obj.ObjectType.NIL):
+            return ErrorHandler.runtime_error(f'incompatible types: {val.type()} {tsig.obj_type}')
 
     env.set(name, val, tsig)
 
@@ -133,6 +136,7 @@ def eval_function_literal(node, env):
     tsig = None
     if node.return_type != None:
         tsig = obj.typesig(node.return_type)
+        print(node.return_type)
         if(tsig == None): return ErrorHandler.runtime_error('bad return type')
 
     func_obj = obj.Function(node.name, node.params, node.body, env, tsig)
@@ -145,7 +149,14 @@ def apply_function(func, args):
             ext_env = extend_func_env(func, args)
             if is_error(ext_env): return ext_env
             evaluated = eval(func.body, ext_env)
-            return unwrap_return_value(evaluated, func.tsig)
+            
+            if evaluated == None:
+                ret = obj.Nil()
+            else:
+                ret = unwrap_return_value(evaluated, func.tsig)
+                if ret == None:
+                    ret = obj.Nil()
+            return ret
         case obj.Builtin:
             return func.function(args)
         case _:
@@ -168,7 +179,8 @@ def unwrap_return_value(return_obj, tsig=None):
 
     if tsig != None and not tsig.any:
         if return_obj.type() != tsig.obj_type:
-            return ErrorHandler.runtime_error(f'incompatible return type. expected {tsig.obj_type} got {return_obj.type()}')
+            if not (return_obj.type() == obj.ObjectType.NIL and tsig.maybe):
+                return ErrorHandler.runtime_error(f'incompatible return type. expected {tsig.obj_type} got {return_obj.type()}')
     return return_obj
 
 def eval_block_statement(statements, env):
