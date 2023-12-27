@@ -85,6 +85,10 @@ class TokenType(Enum):
     LOOP = auto() #todo
     IS = auto()
 
+    PYEVAL = auto()
+    PYEXEC = auto()
+
+
 type_tokens = [
     TokenType.T_INT,
     TokenType.T_FLOAT,

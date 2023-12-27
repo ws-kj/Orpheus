@@ -80,7 +80,9 @@ class Parser(object):
         self.register_prefix(TokenType.IF, self.parse_if_expression)
         self.register_prefix(TokenType.PASS, self.parse_pass_statement)
         self.register_prefix(TokenType.WHILE, self.parse_while_statement)
-    
+
+        self.register_prefix(TokenType.PYEVAL, self.parse_pyeval_expression)
+
         self.register_infix(TokenType.LBRACKET, self.parse_index_expression)
         self.register_infix(TokenType.LPAREN, self.parse_call_expression)
         self.register_infix(TokenType.EQUAL_EQUAL, self.parse_infix_expression)
@@ -192,6 +194,9 @@ class Parser(object):
             left_exp = infix(left_exp)
 
         return left_exp
+
+    def parse_pyeval_expression(self):
+        pass
 
     def parse_type_literal(self):
         return tree.TypeAnnotation(self.current_token, False)

@@ -35,7 +35,10 @@ class Scanner(object):
         "any": TokenType.T_ANY,
         "auto": TokenType.T_AUTO,
         "list": TokenType.T_ARRAY,
-        "map": TokenType.T_MAP
+        "map": TokenType.T_MAP,
+
+ #       "pyeval": TokenType.PYEVAL,
+ #       "pyexec": TokenType.PYEXEC
     }
 
     def __init__(self, source: str):

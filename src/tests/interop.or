@@ -1,0 +1,6 @@
+var py_wd: str? = p' import os; os.getcwd() '
+var bash_wd: str? = b'pwd'
+
+if has(cwd) -> print(cwd)
+
+pyeval

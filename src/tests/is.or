@@ -3,8 +3,11 @@ func test(a: int, b: int) : int?
     if a == 5 -> return a + b
     return nil
 
-println(test(5, 1))
-
-println(test(4, 1))
-
-println()
+var x: int? = nil
+println(type(x))
+x = 5
+println(type(x))
+println(x is int)
+println(has(x))
+x = nil
+println(has(x))

@@ -76,12 +76,19 @@ def __type(args):
         return ErrorHandler.runtime_error(f'type: expected 1 argument, got {len(args)}')
     return obj.TypeSig(args[0].type())
 
+def __has(args):
+    if len(args) != 1:
+        return ErrorHandler.runtime_error(f'has: expected 1 argument, got {len(args)}')
+
+    return obj.Bool(args[0].type() != obj.ObjectType.NIL)
+
 builtins = {
     "len": obj.Builtin(__len),
     "print": obj.Builtin(__print),
     "println": obj.Builtin(__println),
     "tail": obj.Builtin(__tail),
     "append": obj.Builtin(__append),
-    "type": obj.Builtin(__type)
+    "type": obj.Builtin(__type),
+    "has": obj.Builtin(__has)
 }
 

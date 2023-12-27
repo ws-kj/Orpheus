@@ -1,0 +1,6 @@
+var name: str = "will"
+var age: int = 18
+
+println("My name is {name} and I am {age} years old.")
+
+

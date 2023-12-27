@@ -47,7 +47,7 @@ def eval(node, env):
         case tree.FloatLiteral:
             return obj.Float(node.value)
         case tree.StringLiteral:
-            return obj.String(node.value)
+            return eval_string(node, env)
         case tree.Boolean:
             return bool_obj(node.value)
         case tree.Identifier:
@@ -107,6 +107,9 @@ def eval_expressions(exps, env):
         if(is_error(evaluated)): return [evaluated]
         result.append(evaluated)
     return result
+
+def eval_string(node, env):
+    return obj.String(node.value)
 
 def eval_var_statement(node, env):
     val = eval(node.value, env)
