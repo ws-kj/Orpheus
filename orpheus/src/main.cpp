@@ -3,10 +3,15 @@
 #include <sstream>
 
 #include "../include/error_handler.h"
-#include "../include/tokentype.h"
+#include "../include/scanner.h"
 
-void run(std::string source) {
-    std::cout << source << std::endl;
+void run(const std::string& source) {
+    Scanner scanner = Scanner(source);
+
+    std::vector<Token> tokens = scanner.ScanTokens();
+    for(const auto& t : tokens) {
+        std::cout << t << "\n";
+    }
 }
 
 int run_file(char *filename) {
@@ -21,6 +26,7 @@ int run_file(char *filename) {
     buffer << t.rdbuf();
 
     run(buffer.str());
+
 
     if(ErrorHandler::had_error) {
         return 1;

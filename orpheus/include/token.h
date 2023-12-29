@@ -3,12 +3,15 @@
 #include "tokentype.h"
 
 class Token {
+public:
     TokenType type;
     std::string literal;
     int line;
 
-    std::string to_string() const {
-        return NULL;
-    }
+    Token(TokenType type, const std::string& literal, int line) 
+        : type(type), literal(literal), line(line) {}
+
+    friend std::ostream& operator<<(std::ostream& out, const Token& token);
+
 };
 

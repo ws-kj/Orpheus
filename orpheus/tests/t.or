@@ -1,0 +1,21 @@
+func add(a: int, b: any)
+->
+    return a + b
+
+add(1, 2)
+
+func double(n: any)
+->
+    if len(n) > 0
+    ->
+        return n[0]*2
+
+var a: list = [2, 3]
+
+println(double(a))
+
+var n: int = 5
+println(n)
+n = 3
+n = n + 1
+println(n)

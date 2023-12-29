@@ -1,0 +1,11 @@
+var b = 22
+
+b / 2 == 10
+
+if b > 15 and b / 2 == 10
+->
+    println("Cool!")
+else if b == 22
+->
+    pass
+    println("cool")

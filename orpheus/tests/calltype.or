@@ -1,0 +1,7 @@
+func add(a: int, b: int) 
+->
+    return 5
+
+var x: int = add(1, 2)
+
+x

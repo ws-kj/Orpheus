@@ -1,0 +1,38 @@
+model "model.conf"
+
+var i: int = 1
+var j: int = 4
+
+var mynum: int? 
+
+mynum = << Compute the sum of $i and $j. >>
+
+tool func add_int(a: int, b: int) : int 
+: "Compute the sum of a and b"
+-> return a + b
+
+
+
+println(add_int(i, j))
+
+if has(mynum)
+->
+    println(mynum)
+else 
+->
+    println("Error")
+
+//kwds:
+//any
+//auto
+//int
+//float
+//str
+//bool
+//func
+//list
+//map
+//associate with env entry -> any can change, auto deduces from init
+//error if not match
+//dict and array can ha ve any type
+//default init if type and no value
