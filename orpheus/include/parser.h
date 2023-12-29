@@ -4,6 +4,7 @@
 #include <vector>
 #include <sstream>
 #include <memory>
+#include <functional>
 
 #include "tokentype.h"
 #include "token.h"
@@ -51,8 +52,29 @@ public:
     std::shared_ptr<FunctionStatement>   ParseFunctionStatement();
     std::shared_ptr<ExpressionStatement> ParseExpressionStatement();
     std::shared_ptr<PassStatement>       ParsePassStatement();
+    std::shared_ptr<WhileStatement>      ParseWhileStatement();
 
     std::shared_ptr<Expression> ParseExpression(PrecLevel precedence);
+    std::shared_ptr<Expression> ParsePrefixExpression();
+    std::shared_ptr<Expression> ParseInfixExpression(std::shared_ptr<Expression> left);
+    
+    std::shared_ptr<Expression> ParseBlockExpression();
+    std::shared_ptr<Expression> ParseIfExpression();
+
+    std::shared_ptr<Expression> ParseIdentifier();
+    std::shared_ptr<Expression> ParseInteger();
+    std::shared_ptr<Expression> ParseFloat();
+    std::shared_ptr<Expression> ParseString();
+    std::shared_ptr<Expression> ParseBoolean();
+    std::shared_ptr<Expression> ParseNil();
+    std::shared_ptr<Expression> ParseListLiteral();
+    std::shared_ptr<Expression> ParseMapLiteral();
+
+    std::shared_ptr<Expression> ParseCallExpression(std::shared_ptr<Expression> left);
+    std::shared_ptr<Expression> ParseIndexExpression(std::shared_ptr<Expression> left);
+    
+    std::shared_ptr<Expression> ParseTypeAnnotation();
+
 
     void Advance();
     bool CurrentTokenIs(TokenType type) const;

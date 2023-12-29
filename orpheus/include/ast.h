@@ -39,7 +39,7 @@ public:
     bool is_maybe;
 };
 
-class BlockStatement : public Statement {
+class BlockExpression : public Expression {
 public:
     std::vector<std::shared_ptr<Statement>> statements;
 };
@@ -110,8 +110,8 @@ public:
 class IfExpression : public Expression {
 public:
     std::shared_ptr<Expression> condition;
-    std::shared_ptr<BlockStatement> consequence;
-    std::shared_ptr<BlockStatement> alternative;
+    std::shared_ptr<BlockExpression> consequence;
+    std::shared_ptr<BlockExpression> alternative;
 };
 
 class ExpressionStatement : public Statement {
@@ -124,14 +124,14 @@ public:
 class WhileStatement : public Statement {
 public:
     std::shared_ptr<Expression> condition;
-    std::shared_ptr<BlockStatement> body;
+    std::shared_ptr<BlockExpression> body;
 };
 
 class FunctionStatement : public Statement {
 public:
     std::shared_ptr<Identifier> name;
     std::vector<std::tuple<Identifier, std::shared_ptr<TypeAnnotation>>> params;
-    std::shared_ptr<BlockStatement> body;
+    std::shared_ptr<BlockExpression> body;
     std::shared_ptr<TypeAnnotation> return_type;
 };
 

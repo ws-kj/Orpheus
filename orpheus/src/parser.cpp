@@ -38,7 +38,44 @@ void Parser::RegisterInfix(TokenType type, InfixFn fn) {
 }
 
 void Parser::RegisterAll() {
-    
+    RegisterPrefix(TokenType::IDENTIFIER, &Parser::ParseIdentifier);
+    RegisterPrefix(TokenType::INTEGER, &Parser::ParseInteger);
+    RegisterPrefix(TokenType::FLOAT, &Parser::ParseFloat);
+    RegisterPrefix(TokenType::STRING, &Parser::ParseString);
+    RegisterPrefix(TokenType::TRUE, &Parser::ParseBoolean);
+    RegisterPrefix(TokenType::FALSE, &Parser::ParseBoolean);
+    RegisterPrefix(TokenType::NIL, &Parser::ParseNil);
+    RegisterPrefix(TokenType::LBRACKET, &Parser::ParseListLiteral);
+    RegisterPrefix(TokenType::LBRACE, &Parser::ParseMapLiteral); 
+
+    RegisterPrefix(TokenType::T_INT, &Parser::ParseTypeAnnotation);
+    RegisterPrefix(TokenType::T_FLOAT, &Parser::ParseTypeAnnotation);
+    RegisterPrefix(TokenType::T_STR, &Parser::ParseTypeAnnotation);
+    RegisterPrefix(TokenType::T_MAP, &Parser::ParseTypeAnnotation);
+    RegisterPrefix(TokenType::T_LIST, &Parser::ParseTypeAnnotation);
+    RegisterPrefix(TokenType::T_BOOL, &Parser::ParseTypeAnnotation);
+    RegisterPrefix(TokenType::FUNC, &Parser::ParseTypeAnnotation);
+
+    RegisterPrefix(TokenType::ARROW, &Parser::ParseBlockExpression);
+    RegisterPrefix(TokenType::IF, &Parser::ParseIfExpression);
+ 
+    RegisterInfix(TokenType::LBRACKET, &Parser::ParseIndexExpression);
+    RegisterInfix(TokenType::LPAREN, &Parser::ParseCallExpression);
+
+    RegisterInfix(TokenType::EQUAL_EQUAL, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::BANG_EQUAL, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::LESS, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::LESS_EQUAL, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::GREATER, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::GREATER_EQUAL, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::PLUS, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::MINUS, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::SLASH, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::STAR, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::PERCENT, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::AND, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::OR, &Parser::ParseInfixExpression);
+    RegisterInfix(TokenType::IS, &Parser::ParseInfixExpression);
 }
 
 Program Parser::ParseProgram() {
@@ -67,6 +104,8 @@ std::shared_ptr<Statement> Parser::ParseStatement() {
             return ParseFunctionStatement();
         case TokenType::PASS:
             return ParsePassStatement();
+        case TokenType::WHILE:
+            return ParseWhileStatement();
         case TokenType::NEWLINE:
         case TokenType::INDENT:
         case TokenType::DEDENT:
