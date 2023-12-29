@@ -4,6 +4,8 @@
 
 #include "../include/error_handler.h"
 #include "../include/scanner.h"
+#include "../include/parser.h"
+#include "../include/ast.h"
 
 void run(const std::string& source) {
     Scanner scanner = Scanner(source);
@@ -12,6 +14,10 @@ void run(const std::string& source) {
     for(const auto& t : tokens) {
         std::cout << t << "\n";
     }
+    std::cout << "\n";
+
+    Parser parser = Parser(tokens);
+    Program program = parser.ParseProgram();
 }
 
 int run_file(char *filename) {

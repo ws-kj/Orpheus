@@ -27,9 +27,9 @@ public:
     void AddToken(TokenType token_type, std::string literal="");
 
     bool Match(char expected);
-    bool IsAtEnd();
-    char Peek();
-    char PeekNext();
+    bool IsAtEnd() const;
+    char Peek() const;
+    char PeekNext() const;
     char Advance();
 
     void Indent();

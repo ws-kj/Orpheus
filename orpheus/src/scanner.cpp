@@ -34,7 +34,7 @@ std::vector<Token> Scanner::ScanTokens() {
     return tokens;
 }
 
-bool Scanner::IsAtEnd() {
+bool Scanner::IsAtEnd() const {
     return current >= source.length();
 }
 
@@ -131,7 +131,7 @@ void Scanner::ScanToken() {
             } else if (c == ' ' || c == '\t' || c == '\r') {
                 // Ignore
             } else {
-                ErrorHandler::Error(line, "Error: unexpected character.");
+                ErrorHandler::Error(line, "unexpected character");
             }
             break;
     }
@@ -150,12 +150,12 @@ bool Scanner::Match(char expected) {
     return true;
 }
 
-char Scanner::Peek() {
+char Scanner::Peek() const {
     if(IsAtEnd()) return '\0';
     return source[current];
 }
 
-char Scanner::PeekNext() {
+char Scanner::PeekNext() const {
     if(current + 1 >= source.length()) return '\0';
     return source[current+1];
 }
@@ -194,7 +194,7 @@ void Scanner::Indent() {
             level = levels.back();
         }
 
-        if(level < n) ErrorHandler::Error(line, "Error: invalid indentation.");
+        if(level < n) ErrorHandler::Error(line, "invalid indentation");
     }
 }
        
@@ -248,7 +248,7 @@ void Scanner::String() {
     }
 
     if(IsAtEnd()) {
-        ErrorHandler::Error(line, "Error: unterminated string.");
+        ErrorHandler::Error(line, "unterminated string");
         return;
     }
 
