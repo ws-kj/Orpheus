@@ -36,6 +36,7 @@ class Parser {
     std::unordered_map<TokenType, PrefixFn> prefix_fns;
     std::unordered_map<TokenType, InfixFn> infix_fns;
 
+
 public:
     Parser(const std::vector<Token>& tokens = {});
 
