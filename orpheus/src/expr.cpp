@@ -24,3 +24,39 @@ std::shared_ptr<Expression> Parser::ParseExpression(PrecLevel precedence) {
     return left_exp;
 }
 
+std::shared_ptr<Expression> Parser::ParsePrefixExpression() {
+    PrefixExpression expr(current_token, current_token.literal, nullptr);
+    Advance();
+    expr.right = ParseExpression(PrecLevel::PREFIX);
+    return std::make_shared<Expression>(expr);
+}
+
+std::shared_ptr<Expression> Parser::ParseInfixExpression(std::shared_ptr<Expression> left) {
+    InfixExpression expr(current_token, left, current_token.literal, nullptr);
+    auto prec = CurrentPrecedence();
+    Advance();
+    expr.right = ParseExpression(prec);
+    return std::make_shared<Expression>(expr);
+}
+
+std::shared_ptr<Expression> Parser::ParseGroupedExpression() {
+    Advance();
+    std::shared_ptr<Expression> expr = ParseExpression(PrecLevel::LOWEST);
+    if(!ExpectPeek(TokenType::RPAREN)) return nullptr;
+    return expr;
+}
+
+std::shared_ptr<Expression> Parser::ParseBlockExpression() {
+    BlockExpression block(current_token, {});
+    Advance();
+
+    while(!CurrentTokenIs(TokenType::DEDENT) && !CurrentTokenIs(TokenType::ENDFILE)) {
+        std::shared_ptr<Statement> stmt = ParseStatement();
+        if(stmt != nullptr) {
+            block.statements.push_back(stmt);
+        }
+        Advance();
+    }
+
+    return std::make_shared<Expression>(block);
+}

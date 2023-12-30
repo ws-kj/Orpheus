@@ -60,6 +60,7 @@ public:
     std::shared_ptr<Expression> ParseInfixExpression(std::shared_ptr<Expression> left);
     
     std::shared_ptr<Expression> ParseBlockExpression();
+    std::shared_ptr<Expression> ParseGroupedExpression();
     std::shared_ptr<Expression> ParseIfExpression();
 
     std::shared_ptr<Expression> ParseIdentifier();

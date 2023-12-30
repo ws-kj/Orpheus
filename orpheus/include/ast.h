@@ -41,17 +41,23 @@ public:
 
 class BlockExpression : public Expression {
 public:
+    BlockExpression(Token token, std::vector<std::shared_ptr<Statement>> statements)
+        : Expression(token), statements(statements) {}
     std::vector<std::shared_ptr<Statement>> statements;
 };
 
 class PrefixExpression : public Expression {
 public:
+    PrefixExpression(Token token, const std::string& op, std::shared_ptr<Expression> right)
+        : Expression(token), op(op), right(right) {}
     std::string op;
     std::shared_ptr<Expression> right;
 };
 
 class InfixExpression : public Expression {
 public:
+    InfixExpression(Token token, std::shared_ptr<Expression> left, const std::string& op, std::shared_ptr<Expression> right)
+        : Expression(token), left(left), op(op), right(right) {}
     std::shared_ptr<Expression> left;
     std::string op;
     std::shared_ptr<Expression> right;
