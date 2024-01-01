@@ -69,7 +69,7 @@ std::shared_ptr<Expression> Parser::ParseArrowBlock() {
         } else {
             Token token = current_token;
             Advance();
-            return std::make_shared<Expression>(BlockExpression(token, {ParseStatement()}));
+            return std::make_shared<BlockExpression>(BlockExpression(token, {ParseStatement()}));
         }
     } else {
         if(!ExpectPeek(TokenType::NEWLINE)) return nullptr;
@@ -80,13 +80,22 @@ std::shared_ptr<Expression> Parser::ParseArrowBlock() {
         } else {
             Token token = current_token;
             Advance();
-            return std::make_shared<Expression>(BlockExpression(token, {ParseStatement()}));
+            return std::make_shared<BlockExpression>(BlockExpression(token, {ParseStatement()}));
         }
     }
 }
 
 std::shared_ptr<Expression> Parser::ParseIdentifier() {
-    return nullptr;
+/*    if(PeekTokenIs(TokenType::EQUAL)) {
+        Token tok = current_token;
+        std::shared_ptr<Identifier> name = std::make_shared<Identifier>(Identifier(tok, current_token.literal));
+        Advance();
+        Advance();
+        std::shared_ptr<Expression> value = ParseExpression(PrecLevel::LOWEST);
+        AssignmentStatement stmt = AssignmentStatement(tok, name, value);
+        return std::make_shared<AssignmentStatement>(stmt);
+    } */ 
+    return std::make_shared<Identifier>(Identifier(current_token, current_token.literal));   
 }
 
 std::shared_ptr<Expression> Parser::ParseInteger() {
@@ -101,4 +110,105 @@ std::shared_ptr<Expression> Parser::ParseInteger() {
         return nullptr;
     }
 }
-    
+
+std::shared_ptr<Expression> Parser::ParseFloat() {
+    try {
+        float value = std::stof(current_token.literal);
+        return std::make_shared<FloatLiteral>(FloatLiteral(current_token, value));
+    } catch (const std::invalid_argument& e) {
+        ErrorHandler::Error(current_token.line, "could not parse float literal");
+        return nullptr;
+    } catch (const std::out_of_range& e) {
+        ErrorHandler::Error(current_token.line, "float literal out of range");
+        return nullptr;
+    }
+}
+
+std::shared_ptr<Expression> Parser::ParseString() {
+    return std::make_shared<StringLiteral>(StringLiteral(current_token, current_token.literal));   
+}
+
+std::shared_ptr<Expression> Parser::ParseBoolean() {
+    return std::make_shared<Boolean>(Boolean(current_token, CurrentTokenIs(TokenType::TRUE)));
+}
+
+std::shared_ptr<Expression> Parser::ParseNil() {
+    return std::make_shared<Nil>(Nil(current_token));
+}
+
+std::vector<std::shared_ptr<Expression>> Parser::ParseExpressionList(TokenType end) {
+    std::vector<std::shared_ptr<Expression>> list;
+    IgnoreWhitespace();
+
+    if(PeekTokenIs(end)) {
+        Advance();
+        return list;
+    }
+
+    Advance();
+    list.push_back(ParseExpression(PrecLevel::LOWEST));
+
+    while(PeekTokenIs(TokenType::COMMA)) {
+        Advance();
+        IgnoreWhitespace();
+        Advance();
+        list.push_back(ParseExpression(PrecLevel::LOWEST));
+        IgnoreWhitespace();
+    }
+
+    if(!ExpectPeek(end)) {
+        ErrorHandler::Error(current_token.line, "expected end token in expression list");
+        std::vector<std::shared_ptr<Expression>> empty;
+        return empty;
+    }
+
+    return list;
+}
+
+std::shared_ptr<Expression> Parser::ParseListLiteral() {
+    return std::make_shared<ListLiteral>(ListLiteral(current_token, ParseExpressionList(TokenType::RBRACKET)));
+}
+
+std::shared_ptr<Expression> Parser::ParseMapLiteral() {
+    Token tok = current_token;
+
+    std::map<std::shared_ptr<Expression>, std::shared_ptr<Expression>> pairs;
+
+    while(!PeekTokenIs(TokenType::RBRACE)) {
+        IgnoreWhitespace();
+        Advance();
+
+        std::shared_ptr<Expression> key = ParseExpression(PrecLevel::LOWEST);
+        if (typeid(*key) != typeid(IntegerLiteral) &&
+            typeid(*key) != typeid(StringLiteral) &&
+            typeid(*key) != typeid(FloatLiteral) &&
+            typeid(*key) != typeid(Boolean)) {
+            ErrorHandler::Error(current_token.line, "invalid type for map key");
+            return nullptr;
+        }
+
+        if(!ExpectPeek(TokenType::COLON)) {
+            ErrorHandler::Error(current_token.line, "expected colon in map literal");
+            return nullptr;
+        }
+
+        IgnoreWhitespace();
+        Advance();
+        std::shared_ptr<Expression> value = ParseExpression(PrecLevel::LOWEST);
+        pairs[key] = value;
+
+        IgnoreWhitespace();
+        if(!PeekTokenIs(TokenType::RBRACE)) {
+            if(!ExpectPeek(TokenType::COMMA)) {
+                ErrorHandler::Error(current_token.line, "expected comma in map literal");
+                return nullptr;
+            }
+        }
+    }
+
+    if(!ExpectPeek(TokenType::RBRACE)) {
+        ErrorHandler::Error(current_token.line, "expected right brace in map literal");
+    }
+
+    return std::make_shared<MapLiteral>(MapLiteral(tok, pairs));
+}

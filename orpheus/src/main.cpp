@@ -12,14 +12,16 @@ void run(const std::string& source) {
 
     std::vector<Token> tokens = scanner.ScanTokens();
     for(const auto& t : tokens) {
-        std::cout << t << "\n";
+//        std::cout << t << "\n";
     }
-    std::cout << "\n";
+//    std::cout << "\n";
 
     Parser parser = Parser(tokens);
     Program program = parser.ParseProgram();
 
-    std::cout << program << "\n";
+
+    if(!ErrorHandler::had_error)
+        std::cout << program << "\n";
 
 }
 

@@ -71,6 +71,9 @@ public:
     std::shared_ptr<Expression> ParseString();
     std::shared_ptr<Expression> ParseBoolean();
     std::shared_ptr<Expression> ParseNil();
+
+    std::vector<std::shared_ptr<Expression>> ParseExpressionList(TokenType end);
+
     std::shared_ptr<Expression> ParseListLiteral();
     std::shared_ptr<Expression> ParseMapLiteral();
 

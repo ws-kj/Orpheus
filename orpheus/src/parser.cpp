@@ -38,16 +38,16 @@ void Parser::RegisterInfix(TokenType type, InfixFn fn) {
 }
 
 void Parser::RegisterAll() {
- //   RegisterPrefix(TokenType::IDENTIFIER, &Parser::ParseIdentifier);
+    RegisterPrefix(TokenType::IDENTIFIER, &Parser::ParseIdentifier);
     RegisterPrefix(TokenType::INTEGER, &Parser::ParseInteger);
-/*    RegisterPrefix(TokenType::FLOAT, &Parser::ParseFloat);
-    RegisterPrefix(TokenType::STRING, &Parser::ParseString);
+    RegisterPrefix(TokenType::FLOAT, &Parser::ParseFloat);
     RegisterPrefix(TokenType::TRUE, &Parser::ParseBoolean);
     RegisterPrefix(TokenType::FALSE, &Parser::ParseBoolean);
+    RegisterPrefix(TokenType::STRING, &Parser::ParseString);
     RegisterPrefix(TokenType::NIL, &Parser::ParseNil);
     RegisterPrefix(TokenType::LBRACKET, &Parser::ParseListLiteral);
     RegisterPrefix(TokenType::LBRACE, &Parser::ParseMapLiteral); 
-    RegisterPrefix(TokenType::LPAREN, &Parser::ParseGroupedExpression);
+/*    RegisterPrefix(TokenType::LPAREN, &Parser::ParseGroupedExpression);
 
     RegisterPrefix(TokenType::T_INT, &Parser::ParseTypeAnnotation);
     RegisterPrefix(TokenType::T_FLOAT, &Parser::ParseTypeAnnotation);
@@ -87,7 +87,6 @@ Program Parser::ParseProgram() {
         std::shared_ptr<Statement> statement = ParseStatement();
         if(statement != nullptr) {
             program.statements.push_back(statement);
-            std::cout << *statement;
         }
         if(current_token.type == TokenType::ENDFILE) 
             break;

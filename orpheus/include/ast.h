@@ -35,7 +35,7 @@ public:
 class Program : public Node {
 public:
     std::vector<std::shared_ptr<Statement>> statements;
-    void print(std::ostream& os) const override { for(const auto& stmt : statements) os << *stmt; }
+    void print(std::ostream& os) const override { for(const auto& stmt : statements) os << *stmt << "\n"; }
 };
 
 class TypeAnnotation : public Node {
@@ -114,7 +114,7 @@ public:
     StringLiteral(Token token, const std::string& literal)
         : Expression(token), literal(literal) {}
     std::string literal;
-    void print(std::ostream& os) const override { os << literal; };
+    void print(std::ostream& os) const override { os << "\"" << literal << "\""; };
 };
 
 class MapLiteral : public Expression {
@@ -122,7 +122,17 @@ public:
     MapLiteral(Token token, std::map<std::shared_ptr<Expression>, std::shared_ptr<Expression>> pairs)
         : Expression(token), pairs(pairs) {}
     std::map<std::shared_ptr<Expression>, std::shared_ptr<Expression>> pairs;
-    void print(std::ostream& os) const override {};
+    void print(std::ostream& os) const override {
+        os << "{";
+        auto pair = pairs.begin();
+        auto end = pairs.end();
+        for(; pair != end; pair++) {
+            os << *(pair->first) << ": " << *(pair->second);
+            if(std::next(pair) != end)
+                os << ", ";
+        }
+        os << "}";
+    };
 };
 
 class ListLiteral : public Expression {
@@ -130,7 +140,14 @@ public:
     ListLiteral(Token token, std::vector<std::shared_ptr<Expression>> elements)
         : Expression(token), elements(elements) {}
     std::vector<std::shared_ptr<Expression>> elements;
-    void print(std::ostream& os) const override {};
+    void print(std::ostream& os) const override {
+        os << "[";
+        for(auto i = 0; i<elements.size(); i++) {
+            os << *elements[i];
+            if(i + 1 < elements.size()) os << ",";
+        }
+        os << "]";
+    };
 };
 
 class IndexExpression : public Expression {
@@ -153,7 +170,15 @@ public:
         : Expression(token), function(function), args(args) {}
     std::shared_ptr<Identifier> function;
     std::vector<std::shared_ptr<Expression>> args;
-    void print(std::ostream& os) const override {};
+    void print(std::ostream& os) const override {
+        os << *function;
+        os << "(";
+        for(auto i = 0; i<args.size(); i++) {
+            os << *args[i];
+            if(i + 1 < args.size()) os << ",";
+        }
+        os << ")";
+    };
 };
 
 class IfExpression : public Expression {
@@ -171,7 +196,7 @@ public:
     ExpressionStatement(Token token, std::shared_ptr<Expression> expr)
         : Statement(token), expression(expr) {} 
     std::shared_ptr<Expression> expression;
-    void print(std::ostream& os) const override { expression->print(os); }
+    void print(std::ostream& os) const override { os << *expression; }
 };
 
 class WhileStatement : public Statement {
@@ -195,7 +220,7 @@ public:
     std::shared_ptr<Identifier> name;
     std::shared_ptr<TypeAnnotation> type;
     std::shared_ptr<Expression> value;
-    void print(std::ostream& os) const override {};
+    void print(std::ostream& os) const override { os << "var " << *name << ": " << *type << " = " << *value; }
 };
 
 class AssignmentStatement : public Statement {
@@ -204,15 +229,19 @@ public:
         : Statement(token), name(name), value(value) {}
     std::shared_ptr<Identifier> name;
     std::shared_ptr<Expression> value;
-    void print(std::ostream& os) const override {};
+    void print(std::ostream& os) const override {os << *name << " = " << *value ; }
 };
 
 class IndexAssignment : public Statement {
 public:
     std::shared_ptr<Identifier> name;
-    std::vector<std::shared_ptr<Expression>> index;
+    std::vector<std::shared_ptr<Expression>> indices;
     std::shared_ptr<Expression> value;
-    void print(std::ostream& os) const override {};
+    void print(std::ostream& os) const override {
+        os << name;
+        for(const auto& i : indices) os << "[" << *i << "]";
+        os << " = " << *value;
+    }
 };
 
 class ReturnStatement : public Statement {
