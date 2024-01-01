@@ -1,4 +1,5 @@
 #include "../include/parser.h"
+#include <stdexcept>
 
 std::shared_ptr<Expression> Parser::ParseExpression(PrecLevel precedence) {
     if(prefix_fns.find(current_token.type) == prefix_fns.end()) {
@@ -20,7 +21,6 @@ std::shared_ptr<Expression> Parser::ParseExpression(PrecLevel precedence) {
         Advance();
         left_exp = (this->*infix)(left_exp);
     }
-
     return left_exp;
 }
 
@@ -33,7 +33,7 @@ std::shared_ptr<Expression> Parser::ParsePrefixExpression() {
 
 std::shared_ptr<Expression> Parser::ParseInfixExpression(std::shared_ptr<Expression> left) {
     InfixExpression expr(current_token, left, current_token.literal, nullptr);
-    auto prec = CurrentPrecedence();
+    PrecLevel prec = CurrentPrecedence();
     Advance();
     expr.right = ParseExpression(prec);
     return std::make_shared<Expression>(expr);
@@ -60,3 +60,45 @@ std::shared_ptr<Expression> Parser::ParseBlockExpression() {
 
     return std::make_shared<Expression>(block);
 }
+
+std::shared_ptr<Expression> Parser::ParseArrowBlock() {
+    if(PeekTokenIs(TokenType::ARROW)) {
+        Advance();
+        if(PeekTokenIs(TokenType::NEWLINE)) {
+            return ParseBlockExpression();
+        } else {
+            Token token = current_token;
+            Advance();
+            return std::make_shared<Expression>(BlockExpression(token, {ParseStatement()}));
+        }
+    } else {
+        if(!ExpectPeek(TokenType::NEWLINE)) return nullptr;
+        if(!ExpectPeek(TokenType::ARROW)) return nullptr;
+
+        if(PeekTokenIs(TokenType::NEWLINE)) {
+            return ParseBlockExpression();
+        } else {
+            Token token = current_token;
+            Advance();
+            return std::make_shared<Expression>(BlockExpression(token, {ParseStatement()}));
+        }
+    }
+}
+
+std::shared_ptr<Expression> Parser::ParseIdentifier() {
+    return nullptr;
+}
+
+std::shared_ptr<Expression> Parser::ParseInteger() {
+    try {
+        int value = std::stoi(current_token.literal);
+        return std::make_shared<IntegerLiteral>(IntegerLiteral(current_token, value));
+    } catch (const std::invalid_argument& e) {
+        ErrorHandler::Error(current_token.line, "could not parse integer literal");
+        return nullptr;
+    } catch (const std::out_of_range& e) {
+        ErrorHandler::Error(current_token.line, "integer literal out of range");
+        return nullptr;
+    }
+}
+    

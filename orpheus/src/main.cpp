@@ -18,6 +18,9 @@ void run(const std::string& source) {
 
     Parser parser = Parser(tokens);
     Program program = parser.ParseProgram();
+
+    std::cout << program << "\n";
+
 }
 
 int run_file(char *filename) {

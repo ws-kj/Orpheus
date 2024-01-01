@@ -1,14 +1,9 @@
 #include "../include/ast.h"
 
-std::string Node::TokenLiteral() const {
-    return token.literal;
+std::ostream& operator<<(std::ostream& os, const Node& node) {
+    node.print(os);
+    return os;
 }
 
-std::string Program::TokenLiteral() const {
-    if(!statements.empty()) {
-        return statements[0]->TokenLiteral();
-    }
-    return "";
-}
 
 

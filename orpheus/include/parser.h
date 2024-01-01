@@ -54,12 +54,14 @@ public:
     std::shared_ptr<ExpressionStatement> ParseExpressionStatement();
     std::shared_ptr<PassStatement>       ParsePassStatement();
     std::shared_ptr<WhileStatement>      ParseWhileStatement();
+    std::shared_ptr<AssignmentStatement> ParseAssignmentStatement();
 
     std::shared_ptr<Expression> ParseExpression(PrecLevel precedence);
     std::shared_ptr<Expression> ParsePrefixExpression();
     std::shared_ptr<Expression> ParseInfixExpression(std::shared_ptr<Expression> left);
     
     std::shared_ptr<Expression> ParseBlockExpression();
+    std::shared_ptr<Expression> ParseArrowBlock();
     std::shared_ptr<Expression> ParseGroupedExpression();
     std::shared_ptr<Expression> ParseIfExpression();
 
