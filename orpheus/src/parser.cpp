@@ -47,8 +47,8 @@ void Parser::RegisterAll() {
     RegisterPrefix(TokenType::NIL, &Parser::ParseNil);
     RegisterPrefix(TokenType::LBRACKET, &Parser::ParseListLiteral);
     RegisterPrefix(TokenType::LBRACE, &Parser::ParseMapLiteral); 
-/*    RegisterPrefix(TokenType::LPAREN, &Parser::ParseGroupedExpression);
-
+    RegisterPrefix(TokenType::LPAREN, &Parser::ParseGroupedExpression);
+/*
     RegisterPrefix(TokenType::T_INT, &Parser::ParseTypeAnnotation);
     RegisterPrefix(TokenType::T_FLOAT, &Parser::ParseTypeAnnotation);
     RegisterPrefix(TokenType::T_STR, &Parser::ParseTypeAnnotation);
@@ -62,7 +62,7 @@ void Parser::RegisterAll() {
  
     RegisterInfix(TokenType::LBRACKET, &Parser::ParseIndexExpression);
     RegisterInfix(TokenType::LPAREN, &Parser::ParseCallExpression);
-
+*/
     RegisterInfix(TokenType::EQUAL_EQUAL, &Parser::ParseInfixExpression);
     RegisterInfix(TokenType::BANG_EQUAL, &Parser::ParseInfixExpression);
     RegisterInfix(TokenType::LESS, &Parser::ParseInfixExpression);
@@ -76,7 +76,7 @@ void Parser::RegisterAll() {
     RegisterInfix(TokenType::PERCENT, &Parser::ParseInfixExpression);
     RegisterInfix(TokenType::AND, &Parser::ParseInfixExpression);
     RegisterInfix(TokenType::OR, &Parser::ParseInfixExpression);
-    RegisterInfix(TokenType::IS, &Parser::ParseInfixExpression); */
+    RegisterInfix(TokenType::IS, &Parser::ParseInfixExpression); 
 }
 
 Program Parser::ParseProgram() {

@@ -68,7 +68,9 @@ public:
     std::shared_ptr<Expression> left;
     std::string op;
     std::shared_ptr<Expression> right;
-    void print(std::ostream& os) const override { os << *left << " " << op << " " << *right; }
+    void print(std::ostream& os) const override { 
+        os << "(" << *left << " " << op << " " << *right << ")"; 
+    }
 };
 
 class Nil : public Expression {

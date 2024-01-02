@@ -28,7 +28,7 @@ std::shared_ptr<Expression> Parser::ParsePrefixExpression() {
     PrefixExpression expr(current_token, current_token.literal, nullptr);
     Advance();
     expr.right = ParseExpression(PrecLevel::PREFIX);
-    return std::make_shared<Expression>(expr);
+    return std::make_shared<PrefixExpression>(expr);
 }
 
 std::shared_ptr<Expression> Parser::ParseInfixExpression(std::shared_ptr<Expression> left) {
@@ -36,7 +36,7 @@ std::shared_ptr<Expression> Parser::ParseInfixExpression(std::shared_ptr<Express
     PrecLevel prec = CurrentPrecedence();
     Advance();
     expr.right = ParseExpression(prec);
-    return std::make_shared<Expression>(expr);
+    return std::make_shared<InfixExpression>(expr);
 }
 
 std::shared_ptr<Expression> Parser::ParseGroupedExpression() {
@@ -58,7 +58,7 @@ std::shared_ptr<Expression> Parser::ParseBlockExpression() {
         Advance();
     }
 
-    return std::make_shared<Expression>(block);
+    return std::make_shared<BlockExpression>(block);
 }
 
 std::shared_ptr<Expression> Parser::ParseArrowBlock() {
@@ -179,10 +179,11 @@ std::shared_ptr<Expression> Parser::ParseMapLiteral() {
         Advance();
 
         std::shared_ptr<Expression> key = ParseExpression(PrecLevel::LOWEST);
-        if (typeid(*key) != typeid(IntegerLiteral) &&
-            typeid(*key) != typeid(StringLiteral) &&
-            typeid(*key) != typeid(FloatLiteral) &&
-            typeid(*key) != typeid(Boolean)) {
+        const std::type_info& tid = typeid(*key);
+        if (tid != typeid(IntegerLiteral) &&
+            tid != typeid(StringLiteral) &&
+            tid != typeid(FloatLiteral) &&
+            tid != typeid(Boolean)) {
             ErrorHandler::Error(current_token.line, "invalid type for map key");
             return nullptr;
         }
