@@ -42,14 +42,25 @@ std::shared_ptr<Expression> Parser::ParseInfixExpression(std::shared_ptr<Express
 std::shared_ptr<Expression> Parser::ParseGroupedExpression() {
     Advance();
     std::shared_ptr<Expression> expr = ParseExpression(PrecLevel::LOWEST);
-    if(!ExpectPeek(TokenType::RPAREN)) return nullptr;
+    if(!ExpectPeek(TokenType::RPAREN)) {
+        ErrorHandler::Error(current_token.line, "expected right paren in expression group");
+        return nullptr;
+    }
     return expr;
 }
 
 std::shared_ptr<Expression> Parser::ParseBlockExpression() {
     BlockExpression block(current_token, {});
-    Advance();
+    if(!PeekTokenIs(TokenType::NEWLINE)) {
+        Advance();
+        std::shared_ptr<Statement> stmt = ParseStatement();
 
+        if(stmt != nullptr) {
+            block.statements.push_back(stmt);
+        }
+        return std::make_shared<BlockExpression>(block);
+    }
+    Advance();
     while(!CurrentTokenIs(TokenType::DEDENT) && !CurrentTokenIs(TokenType::ENDFILE)) {
         std::shared_ptr<Statement> stmt = ParseStatement();
         if(stmt != nullptr) {
@@ -217,3 +228,5 @@ std::shared_ptr<Expression> Parser::ParseMapLiteral() {
 
     return std::make_shared<MapLiteral>(MapLiteral(tok, pairs));
 }
+
+

@@ -55,7 +55,18 @@ public:
     BlockExpression(Token token, std::vector<std::shared_ptr<Statement>> statements)
         : Expression(token), statements(statements) {}
     std::vector<std::shared_ptr<Statement>> statements;
-    void print(std::ostream& os) const override { for(const auto& stmt : statements) os << *stmt; };
+    void print(std::ostream& os) const override {
+        if(statements.size() == 1) {
+            os << "-> " << *statements[0];
+        } else {
+            os << "->\n";
+            for(int i=0; i<statements.size(); i++) {
+                os << *statements[i] << "\n";
+                //if(i+1<statements.size()) os << "\n";
+            }
+            os << "<-";
+        }
+    }
 };
 
 class PrefixExpression : public Expression {
