@@ -48,15 +48,15 @@ void Parser::RegisterAll() {
     RegisterPrefix(TokenType::LBRACKET, &Parser::ParseListLiteral);
     RegisterPrefix(TokenType::LBRACE, &Parser::ParseMapLiteral); 
     RegisterPrefix(TokenType::LPAREN, &Parser::ParseGroupedExpression);
-/*
-    RegisterPrefix(TokenType::T_INT, &Parser::ParseTypeAnnotation);
-    RegisterPrefix(TokenType::T_FLOAT, &Parser::ParseTypeAnnotation);
-    RegisterPrefix(TokenType::T_STR, &Parser::ParseTypeAnnotation);
-    RegisterPrefix(TokenType::T_MAP, &Parser::ParseTypeAnnotation);
-    RegisterPrefix(TokenType::T_LIST, &Parser::ParseTypeAnnotation);
-    RegisterPrefix(TokenType::T_BOOL, &Parser::ParseTypeAnnotation);
-    RegisterPrefix(TokenType::FUNC, &Parser::ParseTypeAnnotation);
 
+    RegisterPrefix(TokenType::T_INT, &Parser::ParseTypeLiteral);
+    RegisterPrefix(TokenType::T_FLOAT, &Parser::ParseTypeLiteral);
+    RegisterPrefix(TokenType::T_STR, &Parser::ParseTypeLiteral);
+    RegisterPrefix(TokenType::T_MAP, &Parser::ParseTypeLiteral);
+    RegisterPrefix(TokenType::T_LIST, &Parser::ParseTypeLiteral);
+    RegisterPrefix(TokenType::T_BOOL, &Parser::ParseTypeLiteral);
+    RegisterPrefix(TokenType::FUNC, &Parser::ParseTypeLiteral);
+/*
     RegisterPrefix(TokenType::ARROW, &Parser::ParseBlockExpression);
     RegisterPrefix(TokenType::IF, &Parser::ParseIfExpression);
  

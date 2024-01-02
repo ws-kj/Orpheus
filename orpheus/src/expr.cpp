@@ -136,6 +136,10 @@ std::shared_ptr<Expression> Parser::ParseNil() {
     return std::make_shared<Nil>(Nil(current_token));
 }
 
+std::shared_ptr<Expression> Parser::ParseTypeLiteral() {
+    return std::make_shared<TypeLiteral>(TypeLiteral(current_token, false));
+}
+
 std::vector<std::shared_ptr<Expression>> Parser::ParseExpressionList(TokenType end) {
     std::vector<std::shared_ptr<Expression>> list;
     IgnoreWhitespace();

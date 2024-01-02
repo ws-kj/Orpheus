@@ -71,6 +71,7 @@ public:
     std::shared_ptr<Expression> ParseString();
     std::shared_ptr<Expression> ParseBoolean();
     std::shared_ptr<Expression> ParseNil();
+    std::shared_ptr<Expression> ParseTypeLiteral();
 
     std::vector<std::shared_ptr<Expression>> ParseExpressionList(TokenType end);
 
@@ -80,7 +81,6 @@ public:
     std::shared_ptr<Expression> ParseCallExpression(std::shared_ptr<Expression> left);
     std::shared_ptr<Expression> ParseIndexExpression(std::shared_ptr<Expression> left);
     
-    std::shared_ptr<Expression> ParseTypeAnnotation();
 
 
     void Advance();

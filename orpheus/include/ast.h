@@ -35,11 +35,17 @@ public:
 class Program : public Node {
 public:
     std::vector<std::shared_ptr<Statement>> statements;
-    void print(std::ostream& os) const override { for(const auto& stmt : statements) os << *stmt << "\n"; }
+    void print(std::ostream& os) const override { 
+        for(int i=0; i<statements.size(); i++) {
+            os << *statements[i];
+            if(i+1<statements.size()) os << "\n";
+        }
+    }
 };
 
-class TypeAnnotation : public Node {
+class TypeLiteral : public Expression {
 public:
+    TypeLiteral(Token token, bool is_maybe) : Expression(token), is_maybe(is_maybe) {}
     bool is_maybe;
     void print(std::ostream& os) const override { os << token.literal << (is_maybe ? "?" : ""); }
 };
@@ -211,16 +217,16 @@ public:
 class FunctionStatement : public Statement {
 public:
     std::shared_ptr<Identifier> name;
-    std::vector<std::tuple<Identifier, std::shared_ptr<TypeAnnotation>>> params;
+    std::vector<std::tuple<Identifier, std::shared_ptr<TypeLiteral>>> params;
     std::shared_ptr<BlockExpression> body;
-    std::shared_ptr<TypeAnnotation> return_type;
+    std::shared_ptr<TypeLiteral> return_type;
     void print(std::ostream& os) const override {};
 };
 
 class VarStatement : public Statement {
 public:
     std::shared_ptr<Identifier> name;
-    std::shared_ptr<TypeAnnotation> type;
+    std::shared_ptr<TypeLiteral> type;
     std::shared_ptr<Expression> value;
     void print(std::ostream& os) const override { os << "var " << *name << ": " << *type << " = " << *value; }
 };
