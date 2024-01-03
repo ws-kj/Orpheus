@@ -32,7 +32,9 @@ bool
 list
 map
 mymap[0]
-mymap["wow"]
+mymap["wow"] = 5
 mymap[0][1][2]
 myfunc("okay..", 2, 3)
 myfunc()
+myvar = true
+myvar = "ok!"

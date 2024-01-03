@@ -128,7 +128,7 @@ std::shared_ptr<Node> Parser::ParseArrowBlock() {
 }
 
 std::shared_ptr<Node> Parser::ParseIdentifier() {
-/*    if(PeekTokenIs(TokenType::EQUAL)) {
+    if(PeekTokenIs(TokenType::EQUAL)) {
         Token tok = current_token;
         std::shared_ptr<Identifier> name = std::make_shared<Identifier>(Identifier(tok, current_token.literal));
         Advance();
@@ -136,7 +136,7 @@ std::shared_ptr<Node> Parser::ParseIdentifier() {
         std::shared_ptr<Node> value = ParseExpression(PrecLevel::LOWEST);
         AssignmentStatement stmt = AssignmentStatement(tok, name, value);
         return std::make_shared<AssignmentStatement>(stmt);
-    } */ 
+    } 
     return std::make_shared<Identifier>(Identifier(current_token, current_token.literal));   
 }
 
@@ -281,7 +281,7 @@ std::shared_ptr<Node> Parser::ParseIndexExpression(std::shared_ptr<Node> left) {
             return nullptr;
         }
     }
-/*
+
     if(PeekTokenIs(TokenType::EQUAL)) {
         if(auto ident = std::dynamic_pointer_cast<Identifier>(left); ident) {
             std::shared_ptr<Identifier> name = ident;
@@ -291,7 +291,7 @@ std::shared_ptr<Node> Parser::ParseIndexExpression(std::shared_ptr<Node> left) {
             return std::make_shared<IndexAssignment>(IndexAssignment(tok, name, indices, value));
         }
     }
-*/
+
     return std::make_shared<IndexExpression>(IndexExpression(tok, left, indices));
 }
 

@@ -259,11 +259,13 @@ public:
 
 class IndexAssignment : public Statement {
 public:
+    IndexAssignment(Token token, std::shared_ptr<Identifier> name, std::vector<std::shared_ptr<Node>> indices, std::shared_ptr<Node> value)
+        : Statement(token), name(name), indices(indices), value(value) {}
     std::shared_ptr<Identifier> name;
     std::vector<std::shared_ptr<Node>> indices;
     std::shared_ptr<Node> value;
     void print(std::ostream& os) const override {
-        os << name;
+        os << *name;
         for(const auto& i : indices) os << "[" << *i << "]";
         os << " = " << *value;
     }
