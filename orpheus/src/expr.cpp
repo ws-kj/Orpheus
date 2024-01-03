@@ -293,4 +293,15 @@ std::shared_ptr<Expression> Parser::ParseIndexExpression(std::shared_ptr<Express
     }
 */
     return std::make_shared<IndexExpression>(IndexExpression(tok, left, indices));
-} 
+}
+
+std::shared_ptr<Expression> Parser::ParseCallExpression(std::shared_ptr<Expression> left) {
+    if(auto ident = std::dynamic_pointer_cast<Identifier>(left); ident) {
+        std::shared_ptr<Identifier> name = ident;
+        CallExpression expr(current_token, name, ParseExpressionList(TokenType::RPAREN));
+        return std::make_shared<CallExpression>(expr);
+    }
+
+    ErrorHandler::Error(current_token.line, "expected identifier in function call");
+    return nullptr;
+}

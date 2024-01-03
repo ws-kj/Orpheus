@@ -185,12 +185,12 @@ public:
 
 class CallExpression : public Expression {
 public:
-    CallExpression(Token token, std::shared_ptr<Identifier> function, std::vector<std::shared_ptr<Expression>> args)
-        : Expression(token), function(function), args(args) {}
-    std::shared_ptr<Identifier> function;
+    CallExpression(Token token, std::shared_ptr<Identifier> left, std::vector<std::shared_ptr<Expression>> args)
+        : Expression(token), left(left), args(args) {}
+    std::shared_ptr<Identifier> left;
     std::vector<std::shared_ptr<Expression>> args;
     void print(std::ostream& os) const override {
-        os << *function;
+        os << *left;
         os << "(";
         for(auto i = 0; i<args.size(); i++) {
             os << *args[i];
