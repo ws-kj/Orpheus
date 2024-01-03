@@ -25,8 +25,8 @@ enum class PrecLevel {
 };
 
 class Parser {
-    using PrefixFn = std::shared_ptr<Expression> (Parser::*)();
-    using InfixFn = std::shared_ptr<Expression> (Parser::*)(std::shared_ptr<Expression> left);
+    using PrefixFn = std::shared_ptr<Node> (Parser::*)();
+    using InfixFn = std::shared_ptr<Node> (Parser::*)(std::shared_ptr<Node> left);
 
     std::vector<Token> tokens;
     Token current_token;
@@ -56,30 +56,30 @@ public:
     std::shared_ptr<WhileStatement>      ParseWhileStatement();
     std::shared_ptr<AssignmentStatement> ParseAssignmentStatement();
 
-    std::shared_ptr<Expression> ParseExpression(PrecLevel precedence);
-    std::shared_ptr<Expression> ParsePrefixExpression();
-    std::shared_ptr<Expression> ParseInfixExpression(std::shared_ptr<Expression> left);
+    std::shared_ptr<Node> ParseExpression(PrecLevel precedence);
+    std::shared_ptr<Node> ParsePrefixExpression();
+    std::shared_ptr<Node> ParseInfixExpression(std::shared_ptr<Node> left);
     
-    std::shared_ptr<Expression> ParseBlockExpression();
-    std::shared_ptr<Expression> ParseArrowBlock();
-    std::shared_ptr<Expression> ParseGroupedExpression();
-    std::shared_ptr<Expression> ParseIfExpression();
+    std::shared_ptr<Node> ParseBlockExpression();
+    std::shared_ptr<Node> ParseArrowBlock();
+    std::shared_ptr<Node> ParseGroupedExpression();
+    std::shared_ptr<Node> ParseIfExpression();
 
-    std::shared_ptr<Expression> ParseIdentifier();
-    std::shared_ptr<Expression> ParseInteger();
-    std::shared_ptr<Expression> ParseFloat();
-    std::shared_ptr<Expression> ParseString();
-    std::shared_ptr<Expression> ParseBoolean();
-    std::shared_ptr<Expression> ParseNil();
-    std::shared_ptr<Expression> ParseTypeLiteral();
+    std::shared_ptr<Node> ParseIdentifier();
+    std::shared_ptr<Node> ParseInteger();
+    std::shared_ptr<Node> ParseFloat();
+    std::shared_ptr<Node> ParseString();
+    std::shared_ptr<Node> ParseBoolean();
+    std::shared_ptr<Node> ParseNil();
+    std::shared_ptr<Node> ParseTypeLiteral();
 
-    std::vector<std::shared_ptr<Expression>> ParseExpressionList(TokenType end);
+    std::vector<std::shared_ptr<Node>> ParseExpressionList(TokenType end);
 
-    std::shared_ptr<Expression> ParseListLiteral();
-    std::shared_ptr<Expression> ParseMapLiteral();
+    std::shared_ptr<Node> ParseListLiteral();
+    std::shared_ptr<Node> ParseMapLiteral();
 
-    std::shared_ptr<Expression> ParseCallExpression(std::shared_ptr<Expression> left);
-    std::shared_ptr<Expression> ParseIndexExpression(std::shared_ptr<Expression> left);
+    std::shared_ptr<Node> ParseCallExpression(std::shared_ptr<Node> left);
+    std::shared_ptr<Node> ParseIndexExpression(std::shared_ptr<Node> left);
     
     void Advance();
     bool CurrentTokenIs(TokenType type) const;

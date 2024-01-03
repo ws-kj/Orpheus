@@ -22,7 +22,7 @@ std::shared_ptr<Statement> Parser::ParseStatement() {
 }
 
 std::shared_ptr<ExpressionStatement> Parser::ParseExpressionStatement() {
-    std::shared_ptr<Expression> expr = ParseExpression(PrecLevel::LOWEST);
+    std::shared_ptr<Node> expr = ParseExpression(PrecLevel::LOWEST);
     return std::make_shared<ExpressionStatement>(ExpressionStatement(current_token, expr));
 }
 

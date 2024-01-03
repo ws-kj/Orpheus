@@ -71,20 +71,20 @@ public:
 
 class PrefixExpression : public Expression {
 public:
-    PrefixExpression(Token token, const std::string& op, std::shared_ptr<Expression> right)
+    PrefixExpression(Token token, const std::string& op, std::shared_ptr<Node> right)
         : Expression(token), op(op), right(right) {}
     std::string op;
-    std::shared_ptr<Expression> right;
+    std::shared_ptr<Node> right;
     void print(std::ostream& os) const override { os << op << " " << *right; }
 };
 
 class InfixExpression : public Expression {
 public:
-    InfixExpression(Token token, std::shared_ptr<Expression> left, const std::string& op, std::shared_ptr<Expression> right)
+    InfixExpression(Token token, std::shared_ptr<Node> left, const std::string& op, std::shared_ptr<Node> right)
         : Expression(token), left(left), op(op), right(right) {}
-    std::shared_ptr<Expression> left;
+    std::shared_ptr<Node> left;
     std::string op;
-    std::shared_ptr<Expression> right;
+    std::shared_ptr<Node> right;
     void print(std::ostream& os) const override { 
         os << "(" << *left << " " << op << " " << *right << ")"; 
     }
@@ -138,9 +138,9 @@ public:
 
 class MapLiteral : public Expression {
 public:
-    MapLiteral(Token token, std::map<std::shared_ptr<Expression>, std::shared_ptr<Expression>> pairs)
+    MapLiteral(Token token, std::map<std::shared_ptr<Node>, std::shared_ptr<Node>> pairs)
         : Expression(token), pairs(pairs) {}
-    std::map<std::shared_ptr<Expression>, std::shared_ptr<Expression>> pairs;
+    std::map<std::shared_ptr<Node>, std::shared_ptr<Node>> pairs;
     void print(std::ostream& os) const override {
         os << "{";
         auto pair = pairs.begin();
@@ -156,9 +156,9 @@ public:
 
 class ListLiteral : public Expression {
 public:
-    ListLiteral(Token token, std::vector<std::shared_ptr<Expression>> elements)
+    ListLiteral(Token token, std::vector<std::shared_ptr<Node>> elements)
         : Expression(token), elements(elements) {}
-    std::vector<std::shared_ptr<Expression>> elements;
+    std::vector<std::shared_ptr<Node>> elements;
     void print(std::ostream& os) const override {
         os << "[";
         for(auto i = 0; i<elements.size(); i++) {
@@ -171,10 +171,10 @@ public:
 
 class IndexExpression : public Expression {
 public:
-    IndexExpression(Token token, std::shared_ptr<Expression> left, std::vector<std::shared_ptr<Expression>> indices)
+    IndexExpression(Token token, std::shared_ptr<Node> left, std::vector<std::shared_ptr<Node>> indices)
         : Expression(token), left(left), indices(indices) {}
-    std::shared_ptr<Expression> left;
-    std::vector<std::shared_ptr<Expression>> indices;
+    std::shared_ptr<Node> left;
+    std::vector<std::shared_ptr<Node>> indices;
     void print(std::ostream& os) const override {
         os << *left;
         for(const auto& i : indices) {
@@ -185,10 +185,10 @@ public:
 
 class CallExpression : public Expression {
 public:
-    CallExpression(Token token, std::shared_ptr<Identifier> left, std::vector<std::shared_ptr<Expression>> args)
+    CallExpression(Token token, std::shared_ptr<Identifier> left, std::vector<std::shared_ptr<Node>> args)
         : Expression(token), left(left), args(args) {}
     std::shared_ptr<Identifier> left;
-    std::vector<std::shared_ptr<Expression>> args;
+    std::vector<std::shared_ptr<Node>> args;
     void print(std::ostream& os) const override {
         os << *left;
         os << "(";
@@ -202,11 +202,11 @@ public:
 
 class IfExpression : public Expression {
 public:
-    IfExpression(Token token, std::shared_ptr<Expression> condition, std::shared_ptr<Expression> consequence, std::shared_ptr<Expression> alternative)
+    IfExpression(Token token, std::shared_ptr<Node> condition, std::shared_ptr<Node> consequence, std::shared_ptr<Node> alternative)
         : Expression(token), consequence(consequence), alternative(alternative) {}
-    std::shared_ptr<Expression> condition;
-    std::shared_ptr<Expression> consequence;
-    std::shared_ptr<Expression> alternative;
+    std::shared_ptr<Node> condition;
+    std::shared_ptr<Node> consequence;
+    std::shared_ptr<Node> alternative;
     void print(std::ostream& os) const override {
         //os << "if (" << *condition << ")";
         //os << *consequence;
@@ -218,15 +218,15 @@ public:
 
 class ExpressionStatement : public Statement {
 public:
-    ExpressionStatement(Token token, std::shared_ptr<Expression> expr)
+    ExpressionStatement(Token token, std::shared_ptr<Node> expr)
         : Statement(token), expression(expr) {} 
-    std::shared_ptr<Expression> expression;
+    std::shared_ptr<Node> expression;
     void print(std::ostream& os) const override { os << *expression; }
 };
 
 class WhileStatement : public Statement {
 public:
-    std::shared_ptr<Expression> condition;
+    std::shared_ptr<Node> condition;
     std::shared_ptr<BlockExpression> body;
     void print(std::ostream& os) const override {};
 };
@@ -244,24 +244,24 @@ class VarStatement : public Statement {
 public:
     std::shared_ptr<Identifier> name;
     std::shared_ptr<TypeLiteral> type;
-    std::shared_ptr<Expression> value;
+    std::shared_ptr<Node> value;
     void print(std::ostream& os) const override { os << "var " << *name << ": " << *type << " = " << *value; }
 };
 
 class AssignmentStatement : public Statement {
 public:
-    AssignmentStatement(Token token, std::shared_ptr<Identifier> name, std::shared_ptr<Expression> value)
+    AssignmentStatement(Token token, std::shared_ptr<Identifier> name, std::shared_ptr<Node> value)
         : Statement(token), name(name), value(value) {}
     std::shared_ptr<Identifier> name;
-    std::shared_ptr<Expression> value;
+    std::shared_ptr<Node> value;
     void print(std::ostream& os) const override {os << *name << " = " << *value ; }
 };
 
 class IndexAssignment : public Statement {
 public:
     std::shared_ptr<Identifier> name;
-    std::vector<std::shared_ptr<Expression>> indices;
-    std::shared_ptr<Expression> value;
+    std::vector<std::shared_ptr<Node>> indices;
+    std::shared_ptr<Node> value;
     void print(std::ostream& os) const override {
         os << name;
         for(const auto& i : indices) os << "[" << *i << "]";
@@ -271,7 +271,7 @@ public:
 
 class ReturnStatement : public Statement {
 public:
-    std::shared_ptr<Expression> return_value;
+    std::shared_ptr<Node> return_value;
     void print(std::ostream& os) const override { os << "return " << *return_value; }
 };
 

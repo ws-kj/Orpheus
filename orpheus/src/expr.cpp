@@ -1,7 +1,7 @@
 #include "../include/parser.h"
 #include <stdexcept>
 
-std::shared_ptr<Expression> Parser::ParseExpression(PrecLevel precedence) {
+std::shared_ptr<Node> Parser::ParseExpression(PrecLevel precedence) {
     if(prefix_fns.find(current_token.type) == prefix_fns.end()) {
         std::stringstream msg;
         msg << "unexpected token " << current_token.type;
@@ -10,7 +10,7 @@ std::shared_ptr<Expression> Parser::ParseExpression(PrecLevel precedence) {
     }
 
     auto prefix = prefix_fns[current_token.type];
-    std::shared_ptr<Expression> left_exp = (this->*prefix)();
+    std::shared_ptr<Node> left_exp = (this->*prefix)();
 
     while(!IsPeekEnd() && precedence < PeekPrecedence()) {
         if(infix_fns.find(peek_token.type) == infix_fns.end()) {
@@ -24,14 +24,14 @@ std::shared_ptr<Expression> Parser::ParseExpression(PrecLevel precedence) {
     return left_exp;
 }
 
-std::shared_ptr<Expression> Parser::ParsePrefixExpression() {
+std::shared_ptr<Node> Parser::ParsePrefixExpression() {
     PrefixExpression expr(current_token, current_token.literal, nullptr);
     Advance();
     expr.right = ParseExpression(PrecLevel::PREFIX);
     return std::make_shared<PrefixExpression>(expr);
 }
 
-std::shared_ptr<Expression> Parser::ParseInfixExpression(std::shared_ptr<Expression> left) {
+std::shared_ptr<Node> Parser::ParseInfixExpression(std::shared_ptr<Node> left) {
     InfixExpression expr(current_token, left, current_token.literal, nullptr);
     PrecLevel prec = CurrentPrecedence();
     Advance();
@@ -39,9 +39,9 @@ std::shared_ptr<Expression> Parser::ParseInfixExpression(std::shared_ptr<Express
     return std::make_shared<InfixExpression>(expr);
 }
 
-std::shared_ptr<Expression> Parser::ParseGroupedExpression() {
+std::shared_ptr<Node> Parser::ParseGroupedExpression() {
     Advance();
-    std::shared_ptr<Expression> expr = ParseExpression(PrecLevel::LOWEST);
+    std::shared_ptr<Node> expr = ParseExpression(PrecLevel::LOWEST);
     if(!ExpectPeek(TokenType::RPAREN)) {
         ErrorHandler::Error(current_token.line, "expected right paren in expression group");
         return nullptr;
@@ -49,7 +49,7 @@ std::shared_ptr<Expression> Parser::ParseGroupedExpression() {
     return expr;
 }
 
-std::shared_ptr<Expression> Parser::ParseBlockExpression() {
+std::shared_ptr<Node> Parser::ParseBlockExpression() {
     BlockExpression block(current_token, {});
     if(!PeekTokenIs(TokenType::NEWLINE)) {
         Advance();
@@ -72,14 +72,14 @@ std::shared_ptr<Expression> Parser::ParseBlockExpression() {
     return std::make_shared<BlockExpression>(block);
 }
 
-std::shared_ptr<Expression> Parser::ParseIfExpression() {
+std::shared_ptr<Node> Parser::ParseIfExpression() {
     Token tok = current_token;
 
     Advance();
     std::cout << current_token;
-    std::shared_ptr<Expression> condition = ParseExpression(PrecLevel::LOWEST);
-    std::shared_ptr<Expression> consequence = ParseArrowBlock();
-    std::shared_ptr<Expression> alternative = nullptr;
+    std::shared_ptr<Node> condition = ParseExpression(PrecLevel::LOWEST);
+    std::shared_ptr<Node> consequence = ParseArrowBlock();
+    std::shared_ptr<Node> alternative = nullptr;
 
     if(PeekTokenIs(TokenType::ELSE)) {
         Advance();
@@ -103,7 +103,7 @@ std::shared_ptr<Expression> Parser::ParseIfExpression() {
     return std::make_shared<IfExpression>(IfExpression(tok, condition, consequence, alternative));
 }
 
-std::shared_ptr<Expression> Parser::ParseArrowBlock() {
+std::shared_ptr<Node> Parser::ParseArrowBlock() {
     if(PeekTokenIs(TokenType::ARROW)) {
         Advance();
         if(PeekTokenIs(TokenType::NEWLINE)) {
@@ -127,20 +127,20 @@ std::shared_ptr<Expression> Parser::ParseArrowBlock() {
     }
 }
 
-std::shared_ptr<Expression> Parser::ParseIdentifier() {
+std::shared_ptr<Node> Parser::ParseIdentifier() {
 /*    if(PeekTokenIs(TokenType::EQUAL)) {
         Token tok = current_token;
         std::shared_ptr<Identifier> name = std::make_shared<Identifier>(Identifier(tok, current_token.literal));
         Advance();
         Advance();
-        std::shared_ptr<Expression> value = ParseExpression(PrecLevel::LOWEST);
+        std::shared_ptr<Node> value = ParseExpression(PrecLevel::LOWEST);
         AssignmentStatement stmt = AssignmentStatement(tok, name, value);
         return std::make_shared<AssignmentStatement>(stmt);
     } */ 
     return std::make_shared<Identifier>(Identifier(current_token, current_token.literal));   
 }
 
-std::shared_ptr<Expression> Parser::ParseInteger() {
+std::shared_ptr<Node> Parser::ParseInteger() {
     try {
         int value = std::stoi(current_token.literal);
         return std::make_shared<IntegerLiteral>(IntegerLiteral(current_token, value));
@@ -153,7 +153,7 @@ std::shared_ptr<Expression> Parser::ParseInteger() {
     }
 }
 
-std::shared_ptr<Expression> Parser::ParseFloat() {
+std::shared_ptr<Node> Parser::ParseFloat() {
     try {
         float value = std::stof(current_token.literal);
         return std::make_shared<FloatLiteral>(FloatLiteral(current_token, value));
@@ -166,24 +166,24 @@ std::shared_ptr<Expression> Parser::ParseFloat() {
     }
 }
 
-std::shared_ptr<Expression> Parser::ParseString() {
+std::shared_ptr<Node> Parser::ParseString() {
     return std::make_shared<StringLiteral>(StringLiteral(current_token, current_token.literal));   
 }
 
-std::shared_ptr<Expression> Parser::ParseBoolean() {
+std::shared_ptr<Node> Parser::ParseBoolean() {
     return std::make_shared<Boolean>(Boolean(current_token, CurrentTokenIs(TokenType::TRUE)));
 }
 
-std::shared_ptr<Expression> Parser::ParseNil() {
+std::shared_ptr<Node> Parser::ParseNil() {
     return std::make_shared<Nil>(Nil(current_token));
 }
 
-std::shared_ptr<Expression> Parser::ParseTypeLiteral() {
+std::shared_ptr<Node> Parser::ParseTypeLiteral() {
     return std::make_shared<TypeLiteral>(TypeLiteral(current_token, false));
 }
 
-std::vector<std::shared_ptr<Expression>> Parser::ParseExpressionList(TokenType end) {
-    std::vector<std::shared_ptr<Expression>> list;
+std::vector<std::shared_ptr<Node>> Parser::ParseExpressionList(TokenType end) {
+    std::vector<std::shared_ptr<Node>> list;
     IgnoreWhitespace();
 
     if(PeekTokenIs(end)) {
@@ -204,27 +204,27 @@ std::vector<std::shared_ptr<Expression>> Parser::ParseExpressionList(TokenType e
 
     if(!ExpectPeek(end)) {
         ErrorHandler::Error(current_token.line, "expected end token in expression list");
-        std::vector<std::shared_ptr<Expression>> empty;
+        std::vector<std::shared_ptr<Node>> empty;
         return empty;
     }
 
     return list;
 }
 
-std::shared_ptr<Expression> Parser::ParseListLiteral() {
+std::shared_ptr<Node> Parser::ParseListLiteral() {
     return std::make_shared<ListLiteral>(ListLiteral(current_token, ParseExpressionList(TokenType::RBRACKET)));
 }
 
-std::shared_ptr<Expression> Parser::ParseMapLiteral() {
+std::shared_ptr<Node> Parser::ParseMapLiteral() {
     Token tok = current_token;
 
-    std::map<std::shared_ptr<Expression>, std::shared_ptr<Expression>> pairs;
+    std::map<std::shared_ptr<Node>, std::shared_ptr<Node>> pairs;
 
     while(!PeekTokenIs(TokenType::RBRACE)) {
         IgnoreWhitespace();
         Advance();
 
-        std::shared_ptr<Expression> key = ParseExpression(PrecLevel::LOWEST);
+        std::shared_ptr<Node> key = ParseExpression(PrecLevel::LOWEST);
         const std::type_info& tid = typeid(*key);
         if (tid != typeid(IntegerLiteral) &&
             tid != typeid(StringLiteral) &&
@@ -241,7 +241,7 @@ std::shared_ptr<Expression> Parser::ParseMapLiteral() {
 
         IgnoreWhitespace();
         Advance();
-        std::shared_ptr<Expression> value = ParseExpression(PrecLevel::LOWEST);
+        std::shared_ptr<Node> value = ParseExpression(PrecLevel::LOWEST);
         pairs[key] = value;
 
         IgnoreWhitespace();
@@ -260,11 +260,11 @@ std::shared_ptr<Expression> Parser::ParseMapLiteral() {
     return std::make_shared<MapLiteral>(MapLiteral(tok, pairs));
 }
 
-std::shared_ptr<Expression> Parser::ParseIndexExpression(std::shared_ptr<Expression> left) {
+std::shared_ptr<Node> Parser::ParseIndexExpression(std::shared_ptr<Node> left) {
     Token tok = current_token;
     Advance();
     
-    std::vector<std::shared_ptr<Expression>> indices;
+    std::vector<std::shared_ptr<Node>> indices;
     indices.push_back(ParseExpression(PrecLevel::LOWEST));
 
     if(!ExpectPeek(TokenType::RBRACKET)) {
@@ -287,7 +287,7 @@ std::shared_ptr<Expression> Parser::ParseIndexExpression(std::shared_ptr<Express
             std::shared_ptr<Identifier> name = ident;
             Advance();
             Advance();
-            std::shared_ptr<Expression> value = ParseExpression(PrecLevel::LOWEST);
+            std::shared_ptr<Node> value = ParseExpression(PrecLevel::LOWEST);
             return std::make_shared<IndexAssignment>(IndexAssignment(tok, name, indices, value));
         }
     }
@@ -295,7 +295,7 @@ std::shared_ptr<Expression> Parser::ParseIndexExpression(std::shared_ptr<Express
     return std::make_shared<IndexExpression>(IndexExpression(tok, left, indices));
 }
 
-std::shared_ptr<Expression> Parser::ParseCallExpression(std::shared_ptr<Expression> left) {
+std::shared_ptr<Node> Parser::ParseCallExpression(std::shared_ptr<Node> left) {
     if(auto ident = std::dynamic_pointer_cast<Identifier>(left); ident) {
         std::shared_ptr<Identifier> name = ident;
         CallExpression expr(current_token, name, ParseExpressionList(TokenType::RPAREN));
