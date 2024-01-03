@@ -242,6 +242,8 @@ public:
 
 class VarStatement : public Statement {
 public:
+    VarStatement(Token token, std::shared_ptr<Identifier> name, std::shared_ptr<TypeLiteral> type, std::shared_ptr<Node> value)
+        : Statement(token), name(name), type(type), value(value) {}
     std::shared_ptr<Identifier> name;
     std::shared_ptr<TypeLiteral> type;
     std::shared_ptr<Node> value;

@@ -54,7 +54,6 @@ public:
     std::shared_ptr<ExpressionStatement> ParseExpressionStatement();
     std::shared_ptr<PassStatement>       ParsePassStatement();
     std::shared_ptr<WhileStatement>      ParseWhileStatement();
-    std::shared_ptr<AssignmentStatement> ParseAssignmentStatement();
 
     std::shared_ptr<Node> ParseExpression(PrecLevel precedence);
     std::shared_ptr<Node> ParsePrefixExpression();

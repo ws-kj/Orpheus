@@ -27,7 +27,25 @@ std::shared_ptr<ExpressionStatement> Parser::ParseExpressionStatement() {
 }
 
 std::shared_ptr<VarStatement> Parser::ParseVarStatement() {
-    return nullptr;
+    Token tok = current_token;
+    if(!ExpectPeek(TokenType::IDENTIFIER)) return nullptr;
+
+    std::shared_ptr<Identifier> name = std::make_shared<Identifier>(Identifier(current_token, current_token.literal));
+
+    if(!ExpectPeek(TokenType::COLON)) return nullptr;
+    Advance();
+
+    std::shared_ptr<TypeLiteral> annotation = std::dynamic_pointer_cast<TypeLiteral>(ParseTypeLiteral());
+
+    if(!ExpectPeek(TokenType::EQUAL)) return nullptr;
+    Advance();
+
+    std::shared_ptr<Node> value = ParseExpression(PrecLevel::LOWEST);
+    
+    if(IsPeekEnd()) Advance();
+
+    return std::make_shared<VarStatement>(VarStatement(tok, name, annotation, value));
+
 }
 
 std::shared_ptr<ReturnStatement> Parser::ParseReturnStatement() {
@@ -39,7 +57,7 @@ std::shared_ptr<FunctionStatement> Parser::ParseFunctionStatement() {
 }
 
 std::shared_ptr<PassStatement> Parser::ParsePassStatement() {
-    return nullptr;
+    return std::make_shared<PassStatement>(PassStatement(current_token));
 }
 
 std::shared_ptr<WhileStatement> Parser::ParseWhileStatement() {

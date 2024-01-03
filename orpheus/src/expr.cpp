@@ -179,7 +179,13 @@ std::shared_ptr<Node> Parser::ParseNil() {
 }
 
 std::shared_ptr<Node> Parser::ParseTypeLiteral() {
-    return std::make_shared<TypeLiteral>(TypeLiteral(current_token, false));
+    Token tok = current_token;
+    bool is_maybe = false;
+    if(PeekTokenIs(TokenType::QUESTION)) {
+        is_maybe = true;
+        Advance();
+    }
+    return std::make_shared<TypeLiteral>(TypeLiteral(tok, is_maybe));
 }
 
 std::vector<std::shared_ptr<Node>> Parser::ParseExpressionList(TokenType end) {
