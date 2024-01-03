@@ -202,12 +202,18 @@ public:
 
 class IfExpression : public Expression {
 public:
-    IfExpression(Token token, std::shared_ptr<Expression> condition, std::shared_ptr<BlockExpression> consequence, std::shared_ptr<BlockExpression> alternative)
+    IfExpression(Token token, std::shared_ptr<Expression> condition, std::shared_ptr<Expression> consequence, std::shared_ptr<Expression> alternative)
         : Expression(token), consequence(consequence), alternative(alternative) {}
     std::shared_ptr<Expression> condition;
-    std::shared_ptr<BlockExpression> consequence;
-    std::shared_ptr<BlockExpression> alternative;
-    void print(std::ostream& os) const override {};
+    std::shared_ptr<Expression> consequence;
+    std::shared_ptr<Expression> alternative;
+    void print(std::ostream& os) const override {
+        //os << "if (" << *condition << ")";
+        //os << *consequence;
+        if(alternative != nullptr) {
+            os << "else " << *alternative;
+        }
+    };
 };
 
 class ExpressionStatement : public Statement {

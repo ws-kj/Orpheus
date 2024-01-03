@@ -81,8 +81,6 @@ public:
     std::shared_ptr<Expression> ParseCallExpression(std::shared_ptr<Expression> left);
     std::shared_ptr<Expression> ParseIndexExpression(std::shared_ptr<Expression> left);
     
-
-
     void Advance();
     bool CurrentTokenIs(TokenType type) const;
     bool PeekTokenIs(TokenType type) const;

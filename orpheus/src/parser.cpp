@@ -58,11 +58,11 @@ void Parser::RegisterAll() {
     RegisterPrefix(TokenType::FUNC, &Parser::ParseTypeLiteral);
 
     RegisterPrefix(TokenType::ARROW, &Parser::ParseBlockExpression);
- /*   RegisterPrefix(TokenType::IF, &Parser::ParseIfExpression);
+    RegisterPrefix(TokenType::IF, &Parser::ParseIfExpression);
 
     RegisterInfix(TokenType::LBRACKET, &Parser::ParseIndexExpression);
-    RegisterInfix(TokenType::LPAREN, &Parser::ParseCallExpression);
-*/
+//    RegisterInfix(TokenType::LPAREN, &Parser::ParseCallExpression);
+
     RegisterInfix(TokenType::EQUAL_EQUAL, &Parser::ParseInfixExpression);
     RegisterInfix(TokenType::BANG_EQUAL, &Parser::ParseInfixExpression);
     RegisterInfix(TokenType::LESS, &Parser::ParseInfixExpression);

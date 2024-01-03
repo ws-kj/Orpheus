@@ -31,3 +31,6 @@ str
 bool
 list
 map
+mymap[0]
+mymap["wow"]
+mymap[0][1][2]

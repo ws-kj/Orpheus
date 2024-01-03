@@ -72,6 +72,37 @@ std::shared_ptr<Expression> Parser::ParseBlockExpression() {
     return std::make_shared<BlockExpression>(block);
 }
 
+std::shared_ptr<Expression> Parser::ParseIfExpression() {
+    Token tok = current_token;
+
+    Advance();
+    std::cout << current_token;
+    std::shared_ptr<Expression> condition = ParseExpression(PrecLevel::LOWEST);
+    std::shared_ptr<Expression> consequence = ParseArrowBlock();
+    std::shared_ptr<Expression> alternative = nullptr;
+
+    if(PeekTokenIs(TokenType::ELSE)) {
+        Advance();
+        if(PeekTokenIs(TokenType::IF)) {
+            Advance();
+            alternative = ParseIfExpression();
+        } else {
+            alternative = ParseArrowBlock();
+        }
+    } else if(PeekTokenIs(TokenType::NEWLINE) && DoublePeekIs(TokenType::ELSE)) {
+        Advance();
+        Advance();
+        if(PeekTokenIs(TokenType::IF)) {
+            Advance();
+            alternative = ParseIfExpression();
+        } else {
+            alternative = ParseArrowBlock();
+        }
+    }
+
+    return std::make_shared<IfExpression>(IfExpression(tok, condition, consequence, alternative));
+}
+
 std::shared_ptr<Expression> Parser::ParseArrowBlock() {
     if(PeekTokenIs(TokenType::ARROW)) {
         Advance();
@@ -229,4 +260,37 @@ std::shared_ptr<Expression> Parser::ParseMapLiteral() {
     return std::make_shared<MapLiteral>(MapLiteral(tok, pairs));
 }
 
+std::shared_ptr<Expression> Parser::ParseIndexExpression(std::shared_ptr<Expression> left) {
+    Token tok = current_token;
+    Advance();
+    
+    std::vector<std::shared_ptr<Expression>> indices;
+    indices.push_back(ParseExpression(PrecLevel::LOWEST));
 
+    if(!ExpectPeek(TokenType::RBRACKET)) {
+        ErrorHandler::Error(current_token.line, "expected right bracket in index expression");
+        return nullptr;
+    }
+
+    while(PeekTokenIs(TokenType::LBRACKET)) {
+        Advance();
+        Advance();
+        indices.push_back(ParseExpression(PrecLevel::LOWEST));
+        if(!ExpectPeek(TokenType::RBRACKET)) {
+            ErrorHandler::Error(current_token.line, "expected right bracket in index expression");
+            return nullptr;
+        }
+    }
+/*
+    if(PeekTokenIs(TokenType::EQUAL)) {
+        if(auto ident = std::dynamic_pointer_cast<Identifier>(left); ident) {
+            std::shared_ptr<Identifier> name = ident;
+            Advance();
+            Advance();
+            std::shared_ptr<Expression> value = ParseExpression(PrecLevel::LOWEST);
+            return std::make_shared<IndexAssignment>(IndexAssignment(tok, name, indices, value));
+        }
+    }
+*/
+    return std::make_shared<IndexExpression>(IndexExpression(tok, left, indices));
+} 
