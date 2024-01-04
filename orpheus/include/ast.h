@@ -226,18 +226,32 @@ public:
 
 class WhileStatement : public Statement {
 public:
+    WhileStatement(Token token, std::shared_ptr<Node> condition, std::shared_ptr<Node> body)
+        : Statement(token), condition(condition), body(body) {}
     std::shared_ptr<Node> condition;
-    std::shared_ptr<BlockExpression> body;
-    void print(std::ostream& os) const override {};
+    std::shared_ptr<Node> body;
+    void print(std::ostream& os) const override {
+        os << "while " << *condition << " ";
+        os << *body;
+    };
 };
 
 class FunctionStatement : public Statement {
 public:
+    FunctionStatement(Token token, std::shared_ptr<Identifier> name, std::vector<std::pair<std::shared_ptr<Identifier>, std::shared_ptr<TypeLiteral>>> params, std::shared_ptr<Node> body, std::shared_ptr<Node> return_type)
+        : Statement(token), name(name), params(params), body(body), return_type(return_type) {}
     std::shared_ptr<Identifier> name;
-    std::vector<std::tuple<Identifier, std::shared_ptr<TypeLiteral>>> params;
-    std::shared_ptr<BlockExpression> body;
-    std::shared_ptr<TypeLiteral> return_type;
-    void print(std::ostream& os) const override {};
+    std::vector<std::pair<std::shared_ptr<Identifier>, std::shared_ptr<TypeLiteral>>> params;
+    std::shared_ptr<Node> body;
+    std::shared_ptr<Node> return_type;
+    void print(std::ostream& os) const override {
+        os << "func " << *name << "(";
+        for(const auto& p : params) {
+            os << *(std::get<0>(p)) << ": " << *(std::get<1>(p)) << ", ";
+        }
+        os << ") : " << *return_type << "\n";
+        os << *body;
+    };
 };
 
 class VarStatement : public Statement {
@@ -275,6 +289,8 @@ public:
 
 class ReturnStatement : public Statement {
 public:
+    ReturnStatement(Token token, std::shared_ptr<Node> return_value)
+        : Statement(token), return_value(return_value) {}
     std::shared_ptr<Node> return_value;
     void print(std::ostream& os) const override { os << "return " << *return_value; }
 };

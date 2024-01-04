@@ -40,3 +40,5 @@ myvar = true
 myvar = "ok!"
 var x: int = 5
 var y: int? = nil
+return true
+return "wow!"

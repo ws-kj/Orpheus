@@ -49,11 +49,68 @@ std::shared_ptr<VarStatement> Parser::ParseVarStatement() {
 }
 
 std::shared_ptr<ReturnStatement> Parser::ParseReturnStatement() {
-    return nullptr;
+    Token tok = current_token;
+    Advance();
+    std::shared_ptr<Node> ret_value = ParseExpression(PrecLevel::LOWEST);
+    if(IsPeekEnd()) Advance();
+    return std::make_shared<ReturnStatement>(ReturnStatement(tok, ret_value));
 }
 
 std::shared_ptr<FunctionStatement> Parser::ParseFunctionStatement() {
-    return nullptr;
+    Token tok = current_token;
+    if(!ExpectPeek(TokenType::IDENTIFIER)) return nullptr;
+    auto name = std::make_shared<Identifier>(Identifier(current_token, current_token.literal));
+    if(!ExpectPeek(TokenType::LPAREN)) return nullptr;
+    auto params = ParseFunctionParameters();
+
+    std::shared_ptr<Node> return_type = nullptr;
+    if(PeekTokenIs(TokenType::COLON)) {
+        Advance();
+        Advance();
+        return_type = ParseTypeLiteral();
+    } else {
+        Token typetoken = Token(TokenType::NIL, "nil", current_token.line);
+        return_type = std::make_shared<TypeLiteral>(TypeLiteral(typetoken, false));
+    }
+    std::shared_ptr<Node> body = ParseArrowBlock();
+    FunctionStatement literal(tok, name, params, body, return_type);
+    return std::make_shared<FunctionStatement>(literal);
+}
+
+
+std::vector<std::pair<std::shared_ptr<Identifier>, std::shared_ptr<TypeLiteral>>> Parser::ParseFunctionParameters() {
+    std::vector<std::pair<std::shared_ptr<Identifier>, std::shared_ptr<TypeLiteral>>> params;
+    if(PeekTokenIs(TokenType::RPAREN)) {
+        Advance();
+        return params;
+    }
+    Advance();
+    std::shared_ptr<Identifier> ident = std::make_shared<Identifier>(Identifier(current_token, current_token.literal));
+    if(!ExpectPeek(TokenType::COLON)) return params;
+    Advance();
+    std::shared_ptr<TypeLiteral> annotation = std::dynamic_pointer_cast<TypeLiteral>(ParseTypeLiteral());
+    if((*annotation).token.type == TokenType::T_AUTO) {
+        ErrorHandler::Error(current_token.line, "auto invalid in function declaration");
+        return params;
+    }
+    params.push_back(std::make_pair(ident, annotation));
+
+    while(PeekTokenIs(TokenType::COMMA)) {
+        Advance();
+        Advance();
+        std::shared_ptr<Identifier> ident = std::make_shared<Identifier>(Identifier(current_token, current_token.literal));
+        if(!ExpectPeek(TokenType::COLON)) return params;
+        Advance();
+        std::shared_ptr<TypeLiteral> annotation = std::dynamic_pointer_cast<TypeLiteral>(ParseTypeLiteral());
+        if((*annotation).token.type == TokenType::T_AUTO) {
+            ErrorHandler::Error(current_token.line, "auto invalid in function declaration");
+            return params;
+        }
+        params.push_back(std::make_pair(ident, annotation));
+    }
+
+    if(!ExpectPeek(TokenType::RPAREN)) return {};
+    return params;
 }
 
 std::shared_ptr<PassStatement> Parser::ParsePassStatement() {
@@ -61,7 +118,17 @@ std::shared_ptr<PassStatement> Parser::ParsePassStatement() {
 }
 
 std::shared_ptr<WhileStatement> Parser::ParseWhileStatement() {
-    return nullptr;
+    Token tok = current_token;
+    Advance();
+    std::shared_ptr<Node> condition = ParseExpression(PrecLevel::LOWEST);
+
+    std::shared_ptr<Expression> check_cond = std::dynamic_pointer_cast<Expression>(condition);
+    if(!check_cond) {
+        ErrorHandler::Error(current_token.line, "expected expression");
+        return nullptr;
+    }
+    std::shared_ptr<Node> body = ParseArrowBlock();
+    return std::make_shared<WhileStatement>(WhileStatement(tok, condition, body));
 }
 
 
