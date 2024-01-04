@@ -203,13 +203,13 @@ public:
 class IfExpression : public Expression {
 public:
     IfExpression(Token token, std::shared_ptr<Node> condition, std::shared_ptr<Node> consequence, std::shared_ptr<Node> alternative)
-        : Expression(token), consequence(consequence), alternative(alternative) {}
+        : Expression(token), condition(condition), consequence(consequence), alternative(alternative) {}
     std::shared_ptr<Node> condition;
     std::shared_ptr<Node> consequence;
     std::shared_ptr<Node> alternative;
     void print(std::ostream& os) const override {
-        //os << "if (" << *condition << ")";
-        //os << *consequence;
+        os << "if " << *condition << " ";
+        os << *consequence;
         if(alternative != nullptr) {
             os << "else " << *alternative;
         }

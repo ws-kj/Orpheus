@@ -76,7 +76,6 @@ std::shared_ptr<Node> Parser::ParseIfExpression() {
     Token tok = current_token;
 
     Advance();
-    std::cout << current_token;
     std::shared_ptr<Node> condition = ParseExpression(PrecLevel::LOWEST);
     std::shared_ptr<Node> consequence = ParseArrowBlock();
     std::shared_ptr<Node> alternative = nullptr;
