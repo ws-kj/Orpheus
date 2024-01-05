@@ -166,16 +166,6 @@ class ReturnStatement(Statement):
     token: Token
     return_value: Expression | None = None
 
-@dataclass 
-class PyevalExpression(Expression):
-    token: Token
-    body: str | None = None
-
-@dataclass 
-class PyexecStatement(Statement):
-    token: Token
-    body: str | None = None
-
 #@dataclass
 #class ModelStatement(Statement):
 #    token: Token
