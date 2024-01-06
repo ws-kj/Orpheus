@@ -12,6 +12,13 @@ std::unordered_map<TokenType, ObjectType> typelit_objs = {
     {TokenType::NIL, ObjectType::NIL}
 };
 
+ObjectType hashable_objs[] = {
+    ObjectType::INTEGER,
+    ObjectType::FLOAT,
+    ObjectType::STRING,
+    ObjectType::BOOL
+};
+
 std::ostream& operator<<(std::ostream& out, const ObjectType value) {
     const char* str = "UNKNOWN OBJECT";
     #define PROCESS_VAL(p) case (p): str = #p; break;

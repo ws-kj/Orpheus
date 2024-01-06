@@ -18,7 +18,7 @@ public:
     Environment(std::shared_ptr<Environment> outer = nullptr)
         : outer(outer), store({}) {}
 
-    Entry& Get(const std::string& name);
-    Type&  GetType(const std::string& name);
-    Entry& Set(const std::string& name, std::shared_ptr<Object> obj, std::shared_ptr<Type> type=nullptr);
+    std::shared_ptr<Object> Get(const std::string& name);
+    std::shared_ptr<Type>  GetType(const std::string& name);
+    std::shared_ptr<Object> Set(const std::string& name, std::shared_ptr<Object> obj, std::shared_ptr<Type> type=nullptr);
 };
