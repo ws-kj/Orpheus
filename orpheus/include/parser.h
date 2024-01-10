@@ -72,7 +72,7 @@ public:
     std::shared_ptr<Node> ParseFloat();
     std::shared_ptr<Node> ParseString();
     std::shared_ptr<Node> ParseBoolean();
-    std::shared_ptr<Node> ParseNil();
+    std::shared_ptr<Node> ParseNilLiteral();
     std::shared_ptr<Node> ParseTypeLiteral();
 
     std::vector<std::shared_ptr<Node>> ParseExpressionList(TokenType end);

@@ -173,8 +173,8 @@ std::shared_ptr<Node> Parser::ParseBoolean() {
     return std::make_shared<Boolean>(Boolean(current_token, CurrentTokenIs(TokenType::TRUE)));
 }
 
-std::shared_ptr<Node> Parser::ParseNil() {
-    return std::make_shared<Nil>(Nil(current_token));
+std::shared_ptr<Node> Parser::ParseNilLiteral() {
+    return std::make_shared<NilLiteral>(NilLiteral(current_token));
 }
 
 std::shared_ptr<Node> Parser::ParseTypeLiteral() {

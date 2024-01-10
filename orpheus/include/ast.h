@@ -90,9 +90,9 @@ public:
     }
 };
 
-class Nil : public Expression {
+class NilLiteral : public Expression {
 public:
-    Nil(Token token) : Expression(token) {}
+    NilLiteral(Token token) : Expression(token) {}
     void print(std::ostream& os) const override { os << "nil"; };
 };
 

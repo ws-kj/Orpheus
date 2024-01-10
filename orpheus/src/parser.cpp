@@ -44,7 +44,7 @@ void Parser::RegisterAll() {
     RegisterPrefix(TokenType::TRUE, &Parser::ParseBoolean);
     RegisterPrefix(TokenType::FALSE, &Parser::ParseBoolean);
     RegisterPrefix(TokenType::STRING, &Parser::ParseString);
-    RegisterPrefix(TokenType::NIL, &Parser::ParseNil);
+    RegisterPrefix(TokenType::NIL, &Parser::ParseNilLiteral);
     RegisterPrefix(TokenType::LBRACKET, &Parser::ParseListLiteral);
     RegisterPrefix(TokenType::LBRACE, &Parser::ParseMapLiteral); 
     RegisterPrefix(TokenType::LPAREN, &Parser::ParseGroupedExpression);
